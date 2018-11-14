@@ -24,30 +24,30 @@ class QueryParamValidator(AbstractContextManager):
     def __init__(
         self,
         request: Request,
-        fields: Dict[str, Optional[type]],
+        factories: Dict[str, Optional[type]],
         validators: Dict[str, Validator] = None,
         box_all: bool = True,
     ):
         """
-        Instantiates validator object.
+        Instantiates query validator object.
 
         :param request: Request instance
-        :param fields: mapping of {param -> wanted type}. Providing none as wanted type is equivalent to str,
+        :param factories: mapping of {param -> factory}. Providing none as factory is equivalent to str or lambda x: x,
                        since params are stored as strings.
-        :param validators: dictonary of pre-defined validators
-        :param box_all: include all params that no specified in fields in the param box
+        :param validators: dictionary of pre-defined validators
+        :param box_all: include all params, even if they're not specified in `factories`
         """
         self.request = request
-        self.__fields = fields
+        self._factories = factories
         self._box_all = box_all
         self.result: Dict[str, Any] = {
             k: self.query_params[k]
             # Add all parameters to resulting dictionary of box_all is true.
             # Otherwise keep only specified parameters.
-            for k in (self.query_params if self._box_all else self.__fields)
+            for k in (self.query_params if self._box_all else self._factories)
         }
-        self.__params: Dict[str, Validator] = {k: Validator() for k in self.result}
-        self.__params.update(validators or {})
+        self._params: Dict[str, Validator] = {k: Validator() for k in self.result}
+        self._params.update(validators or {})
 
     @property
     def query_params(self) -> Dict[str, str]:
@@ -64,9 +64,9 @@ class QueryParamValidator(AbstractContextManager):
         :param predicate: predicate function
         :return: None
         """
-        if param not in self.__params:
-            self.__params[param] = Validator()
-        self.__params[param].add(predicate)
+        if param not in self._params:
+            self._params[param] = Validator()
+        self._params[param].add(predicate)
 
     # Alias for add_predicate; returns reference
     def check(
@@ -151,7 +151,7 @@ class QueryParamValidator(AbstractContextManager):
         :return: None
         """
         # Firstly cast parameters into required types
-        for param, cast in self.__fields.items():
+        for param, cast in self._factories.items():
             try:
                 # If cast is None, just leave parameter as a string
                 cast = cast or (lambda x: x)
@@ -177,7 +177,7 @@ class QueryParamValidator(AbstractContextManager):
 
         # Run validations on the each parameter
         for param, value in self.result.items():
-            validator = self.__params[param]
+            validator = self._params[param]
             if not validator(value):
                 raise InvalidQueryParamException(
                     {"error": f"Invalid `{param}` value: {self.result[param]}."},
