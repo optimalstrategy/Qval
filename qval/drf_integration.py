@@ -28,18 +28,18 @@ def get_module():
     module = os.environ.get("DJANGO_SETTINGS_MODULE", None) or os.environ.get(
         "SETTINGS_MODULE", None
     )
-    return module if module is None else import_module(module)
+    return module if module is None else import_module(module.replace(".py", ""))
 
 
 try:
-    from rest_framework.request import Request
+    from rest_framework.request import Request as _Request
     from rest_framework.exceptions import APIException
     from rest_framework.status import (
         HTTP_400_BAD_REQUEST,
         HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
-    REQUEST_CLASS = Request
+    REQUEST_CLASS = _Request
 except ImportError:
     logging.warning("Django Rest Framework is not installed, falling back to mocks.")
 
@@ -48,7 +48,7 @@ except ImportError:
         def __init__(self, detail: Union[dict, str]):
             self.detail = detail
             self.status_code = HTTP_500_INTERNAL_SERVER_ERROR
-            super().__init__(f"{detail}. HTTP CODE: {self.status_code}")
+            super().__init__(detail)
 
     HTTP_400_BAD_REQUEST = 400
     HTTP_500_INTERNAL_SERVER_ERROR = 500

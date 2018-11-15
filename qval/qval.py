@@ -208,7 +208,9 @@ class QueryParamValidator(AbstractContextManager):
         # Report unexpected exceptions
 
         if exc_type not in (InvalidQueryParamException, None):
-            text = f"An error occurred during the validation or inside of the context: exc `{exc_type}` (`{exc_val}`)."
+            text = f"An error occurred during the validation or inside of the context: exc `{exc_type}` ({exc_val}).\n" \
+                   f"| Parameters: {self.query_params}\n" \
+                   f"| Body      : {self.request.body}"
             log.error(
                 __name__,
                 text,

@@ -171,6 +171,6 @@ pip-selfcheck.json
 .idea
 .idea/
 
-pyproject.toml
+#pyproject.toml
 main.py
 .pytest_cache
