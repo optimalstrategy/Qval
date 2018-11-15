@@ -20,9 +20,9 @@ Any error thrown inside or outside of the context will raise an APIError (HTTP c
 
 Example:
     >>> from qval.drf_integration import DummyRequest
-    >>> r = DummyReqeust({"num": "42"})
+    >>> r = DummyRequest({"num": "42"})
     >>> with QueryParamValidator(r, {"num": int}) as p:
-        ... print(p.num)
+    ...     print(p.num)
     42
 
 The code above is to verbose. That's why you should use `validator()` -
@@ -34,14 +34,14 @@ this function does the all boilerplate work for you:
     Simple example:
     >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use dictionary instead of Request instance
     >>> with validate(r, num=int, price=float) as p:
-        ... print(p.num, p.price, p.string, sep=', ')
-    42, 3.14, string
+    ...     print(p.num, p.price, p.string, sep=', ')
+    42, 3.14, s
 
     A little bit more complex, with custom factory:
     >>> r = {"price": "2.79$", "tax": "0.5$"}
     >>> currency2f = lambda x: float(x[:-1])  # factory that converts {num}$ to float
     >>> with validate(r, price=currency2f, tax=currency2f) as p:
-        ... print(p.price, p.tax, sep=', ')
+    ...     print(p.price, p.tax, sep=', ')
     2.79, 0.5
 
 
@@ -51,18 +51,44 @@ You can also use `qval()` decorator:
     >>> @qval(factories, validators)
     ... def view(request, params):  # class-based views are also supported
     ...     print(params.num, params.special, sep=", ")
-    >>> view({"num": 10, "special": 0.7})
+    >>> view({"num": "10", "special": "0.7"})
     10, 0.7
 
     If something fails during validation or inside of the function, an error will be thrown.
     Consider the following examples:
-    >>> factories = {"num": int, "special": int}  # special now int
+    >>> factories = {"num": int, "special": int}  # now special is an integer
     >>> @qval(factories, validators=None)  # no validators for simplicity
     ... def view(request, params):
     ...     pass
-    >>> view({"num": 10, "special": 0.7})
+    >>> view({"num": "10", "special": "0.7"})  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    qval.exceptions.InvalidQueryParamException:
+        {'error': 'Invalid type of the `special` parameter: expected int.'}.
+
+    The HTTP code of the exception above is 400 (Bad Request).
+
+    Now the error is raised inside of the context block:
+    >>> factories = {"num": int, "special": float}
+    >>> @qval(factories, validators=None)  # no validators for simplicity
+    ... def view(request, params):
+    ...     raise IOError  # some random exception
+    >>> view({"num": "10", "special": "0.7"})  # doctest: +IGNORE_EXCEPTION_DETAIL
+    Traceback (most recent call last):
+        ...
+    qval.drf_integration.APIException: An error occurred while processing you request.
+                                       Please contact website administrator.
+
+    The HTTP code of the exception above is 500 (Internal Server Error).
+    The error is logged to stdout by default. See the Note section for more info.
+
+Notes:
+    TODO: add notes
 """
 from .utils import log
 from .qval import QueryParamValidator, validate, qval
 from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator
+
+
+__version__ = "0.1.2"

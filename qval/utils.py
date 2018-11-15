@@ -7,7 +7,7 @@ from .drf_integration import DummyRequest, Request, get_module
 
 def make_request(request: Union[Dict[str, str], Request]) -> Request:
     """
-    Creates DummyRequest if `request` is dictionary, and the `request` itself otherwise.
+    Creates DummyRequest if `request` is dictionary, and returns the `request` itself otherwise.
     :param request: dict or request instance
     :return: request
     """

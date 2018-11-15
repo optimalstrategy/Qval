@@ -1,0 +1,11 @@
+[build-system]
+requires = ["flit"]
+build-backend = "flit.buildapi"
+
+[tool.flit.metadata]
+module = "qval"
+author = "George Usan-Podgornov"
+author-email = ""
+home-page = "https://github.com/OptimalStrategy/Qval"
+classifiers = ["License :: OSI Approved :: MIT License"]
+
