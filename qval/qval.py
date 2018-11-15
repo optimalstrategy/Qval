@@ -167,7 +167,6 @@ class QueryParamValidator(AbstractContextManager):
             except (ValueError, TypeError):
                 expected = "."
                 # Expose only built-in types
-                print(cast)
                 if cast in (int, float):
                     expected = f": expected {cast.__name__}."
                 raise InvalidQueryParamException(

@@ -13,16 +13,54 @@ The core class is called `QueryParamValidator`. It accepts 4 arguments:
 - box_all: If true, adds all request parameter to the final result.
   Otherwise, only specified in `factories` parameters will be added.
 
+If any parameter fails validation, `InvalidQueryParamException` (HTTP code = 400) will be raised.
+Also, only `TypeError`, `ValueError` and `KeyError` occurred when param is provided to factory
+result in the same exception.
+Any error thrown inside or outside of the context will raise an APIError (HTTP code = 500).
 
-Examples:
-    Using `validator()` wrapper:
-      - `validator()` automatically converts dictionary to Request-like objects
-      - Key-value arguments are used to provide factories
+Example:
+    >>> from qval.drf_integration import DummyRequest
+    >>> r = DummyReqeust({"num": "42"})
+    >>> with QueryParamValidator(r, {"num": int}) as p:
+        ... print(p.num)
+    42
 
+The code above is to verbose. That's why you should use `validator()` -
+this function does the all boilerplate work for you:
+    - `validator()` automatically converts dictionary to Request-like objects
+    - Key-value arguments are used to provide factories
+    - It's easier to type
+
+    Simple example:
     >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use dictionary instead of Request instance
     >>> with validate(r, num=int, price=float) as p:
-        ... print(p.num, p.price, p.string)
-    42 3.14 string
+        ... print(p.num, p.price, p.string, sep=', ')
+    42, 3.14, string
+
+    A little bit more complex, with custom factory:
+    >>> r = {"price": "2.79$", "tax": "0.5$"}
+    >>> currency2f = lambda x: float(x[:-1])  # factory that converts {num}$ to float
+    >>> with validate(r, price=currency2f, tax=currency2f) as p:
+        ... print(p.price, p.tax, sep=', ')
+    2.79, 0.5
+
+
+You can also use `qval()` decorator:
+    >>> factories = {"num": int, "special": float}
+    >>> validators = {"special": Validator(lambda x: x > 0)}
+    >>> @qval(factories, validators)
+    ... def view(request, params):  # class-based views are also supported
+    ...     print(params.num, params.special, sep=", ")
+    >>> view({"num": 10, "special": 0.7})
+    10, 0.7
+
+    If something fails during validation or inside of the function, an error will be thrown.
+    Consider the following examples:
+    >>> factories = {"num": int, "special": int}  # special now int
+    >>> @qval(factories, validators=None)  # no validators for simplicity
+    ... def view(request, params):
+    ...     pass
+    >>> view({"num": 10, "special": 0.7})
 """
 from .utils import log
 from .qval import QueryParamValidator, validate, qval

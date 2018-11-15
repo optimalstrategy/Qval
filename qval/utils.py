@@ -1,10 +1,8 @@
-import os
 import logging
 from pprint import pformat
-from importlib import import_module
 from typing import Dict, Any, List, Callable, Union
 
-from .drf_integration import DummyRequest, Request
+from .drf_integration import DummyRequest, Request, get_module
 
 
 def make_request(request: Union[Dict[str, str], Request]) -> Request:
@@ -152,10 +150,7 @@ class ExcLogger(object):
         or default logging.getLogger
         :return: ExcLogger object
         """
-        module = os.environ.get("DJANGO_SETTINGS_MODULE", None)
-        if module is not None:
-            module = import_module(module)
-
+        module = get_module()
         if hasattr(module, "QVAL_LOGGERS"):
             loggers = module.QVAL_LOGGERS
         else:
