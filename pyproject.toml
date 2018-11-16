@@ -8,4 +8,4 @@ author = "George Usan-Podgornov"
 author-email = ""
 home-page = "https://github.com/OptimalStrategy/Qval"
 classifiers = ["License :: OSI Approved :: MIT License"]
-
+description-file = "README.md"
