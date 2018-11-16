@@ -318,7 +318,7 @@ def qval(
             # If default request object is provided, simply use it
             if request_ is not None:
                 request = utils.make_request(request_)
-                args.append(request_)
+                args.append(request)
             # Otherwise check arguments
             elif isinstance(args[0], (dict, fwk.Request)):
                 # Construct request from dict

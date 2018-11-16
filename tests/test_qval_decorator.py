@@ -1,7 +1,7 @@
 import pytest
 from decimal import Decimal
 
-from qval import InvalidQueryParamException, qval
+from qval import InvalidQueryParamException, qval, qval_curry
 from qval.framework_integration import HTTP_400_BAD_REQUEST, Request
 from qval.utils import FrozenBox
 from qval.validator import Validator
@@ -68,3 +68,30 @@ def test_params_validated():
         ViewClass().complex_view(request, 1, 2)
     assert stats[-1] == request["observable"]
     assert e.value.status_code == HTTP_400_BAD_REQUEST
+
+
+# Curries qval with a static request (in this case)
+# Useful for frameworks with static request classes (e.g. Flask)
+def get_curried_qval():
+    request = {
+        "double": "3.14",
+        "num": "10",
+        "price": "2.79",
+        "hashme": "s$cret_t0k3n",
+        "observable": "important metric",
+    }
+    return qval_curry(request)
+
+curried_qval  = get_curried_qval()
+
+@curried_qval(factories, validators)
+def view(some_param, request, params):
+    return some_param, request, params
+
+
+def test_curried_qval():
+    # Test simple view
+    test, r, params = view("test")
+    assert test == "test"
+    assert stats[-1] == r.query_params["observable"]
+    assert set(r.query_params.keys()) == set(params.__dct__.keys())

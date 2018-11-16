@@ -91,4 +91,4 @@ from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator
 
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
