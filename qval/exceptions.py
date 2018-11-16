@@ -1,9 +1,9 @@
 from typing import Union
 
-from .drf_integration import APIException
+from . import framework_integration
 
 
-class InvalidQueryParamException(APIException):
+class InvalidQueryParamException(framework_integration.APIException):
     """
     An error thrown when param fails the validation.
     """
@@ -15,3 +15,6 @@ class InvalidQueryParamException(APIException):
         """
         super().__init__(detail)
         self.status_code = status
+
+# Avoid circular imports
+APIException = framework_integration.APIException

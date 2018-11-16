@@ -19,7 +19,7 @@ result in the same exception.
 Any error thrown inside or outside of the context will raise an APIError (HTTP code = 500).
 
 Example:
-    >>> from qval.drf_integration import DummyRequest
+    >>> from qval.framework_integration import DummyRequest
     >>> r = DummyRequest({"num": "42"})
     >>> with QueryParamValidator(r, {"num": int}) as p:
     ...     print(p.num)
@@ -86,9 +86,9 @@ Notes:
     TODO: add notes
 """
 from .utils import log
-from .qval import QueryParamValidator, validate, qval
+from .qval import QueryParamValidator, validate, qval, qval_curry
 from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator
 
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"

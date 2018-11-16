@@ -2,7 +2,7 @@ import pytest
 from decimal import Decimal
 
 from qval import InvalidQueryParamException, qval
-from qval.drf_integration import HTTP_400_BAD_REQUEST, Request
+from qval.framework_integration import HTTP_400_BAD_REQUEST, Request
 from qval.utils import FrozenBox
 from qval.validator import Validator
 
