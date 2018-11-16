@@ -71,7 +71,7 @@ from qval import Validator
 purchase_factories = {"price": Decimal, "item_id": int, "token": None}
 purchase_validators = {
     "price": Validator(lambda x: x > 0),
-    "token": Validator(lambda x: len(x) == 20),
+    "token": Validator(lambda x: len(x) == 12),
     "item_id": Validator(lambda x: x >= 0),
 }
 
@@ -87,7 +87,10 @@ def purchase_view(request, params):
     """
     GET /api/purchase?
     param item_id : int, positive
-    param price : float, greater than zero
+    param price   : float, greater than zero
+    param token   : string, len == 12
+
+    Example: GET /api/purchase?item_id=1&price=5.8&token=abcdefghijkl
     """
     print(f"{params.item_id} costs {params.price}$.")
     ...
