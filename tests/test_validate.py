@@ -1,6 +1,9 @@
 import pytest
 from qval import validate, APIException, InvalidQueryParamException
-from qval.drf_integration import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_400_BAD_REQUEST
+from qval.framework_integration import (
+    HTTP_500_INTERNAL_SERVER_ERROR,
+    HTTP_400_BAD_REQUEST,
+)
 
 
 def test_params_processed():

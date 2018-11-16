@@ -2,17 +2,18 @@ import logging
 from pprint import pformat
 from typing import Dict, Any, List, Callable, Union
 
-from .drf_integration import DummyRequest, Request, get_module
+from . import framework_integration as fwk
 
 
-def make_request(request: Union[Dict[str, str], Request]) -> Request:
+@fwk._make_request
+def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.Request:
     """
     Creates DummyRequest if `request` is dictionary, and returns the `request` itself otherwise.
     :param request: dict or request instance
     :return: request
     """
     if isinstance(request, dict):
-        return DummyRequest(request)
+        return fwk.DummyRequest(request)
     return request
 
 
@@ -150,7 +151,7 @@ class ExcLogger(object):
         or default logging.getLogger
         :return: ExcLogger object
         """
-        module = get_module()
+        module = fwk.get_module()
         if hasattr(module, "QVAL_LOGGERS"):
             loggers = module.QVAL_LOGGERS
         else:
