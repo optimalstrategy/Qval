@@ -31,8 +31,6 @@ def division_view(request: HttpRequest):
 @qval({"a": float, "b": float})
 def pow_view(request, params):
     """
-    Note that request parameter is now being provided to the view.
-
     GET /api/pow?
     param a : float
     param b : float
