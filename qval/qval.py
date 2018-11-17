@@ -54,15 +54,13 @@ class QueryParamValidator(AbstractContextManager):
         """
         Returns dictionary of query parameters.
         """
-        if hasattr(self.request, "query_params"):
-            return self.request.query_params
-        elif hasattr(self.request, "args"):
-            return self.request.args
-        elif hasattr(self.request, "GET"):
-            return self.request.GET
+        supported_attrs = ("query_params", "GET", "args", "params")
+        for attr in supported_attrs:
+            if hasattr(self.request, attr):
+                return getattr(self.request, attr)
         raise AttributeError(
             "Provided request object has no any of the following attributes: "
-            "`query_params`, `args`, `GET`."
+            "`query_params`, `args`, `GET`, `params`."
         )
 
     def add_predicate(self, param: str, predicate: Callable[[Any], bool]):
@@ -232,7 +230,7 @@ class QueryParamValidator(AbstractContextManager):
         :return:
         """
         # Report unexpected exceptions
-
+        # TODO: better error messages
         if exc_type not in (exceptions.InvalidQueryParamException, None):
             body = getattr(self.request, "body", {})
             text = (
@@ -268,7 +266,7 @@ def validate(
     Examples:
     >>> r = {"num": "42", "s": "str", "double": "3.14"}
     >>> with validate(r, num=int, s=None, double=float) as p:
-        ... print(p.num + p.double, p.s)
+    ...     print(p.num + p.double, p.s)
     45.14 s
 
     >>> r = {"price": "43.5$", "n_items": "1"}
@@ -276,13 +274,13 @@ def validate(
     >>> params = validate(r, price=currency2f, n_items=int
         ... ).positive("n_items")  # n_items must be greater than 0
     >>> with params as p:
-        ... print(p.price, p.n_items)
+    ...     print(p.price, p.n_items)
     43.5 1
 
     :param request: request instance
     :param validators: dictionary of predefined validators
     :param box_all: include all params that no specified in factories in the param box
-    :param factories: factories to validate
+    :param factories: factories that create python object from string parameters
     :return: QueryParamValidator instance
     """
     # Wrap dictionary with request-like object
@@ -320,10 +318,10 @@ def qval(
                 request = utils.make_request(request_)
                 args.insert(0, request)
             # Otherwise check arguments
-            elif isinstance(args[0], (dict, fwk.Request)):
+            elif isinstance(args[0], fwk.RequestType):
                 # And construct request from dict
                 request = args[0] = utils.make_request(args[0])
-            elif isinstance(args[1], (dict, fwk.Request)):
+            elif isinstance(args[1], fwk.RequestType):
                 request = args[1] = utils.make_request(args[1])
             else:
                 raise ValueError(

@@ -107,7 +107,7 @@ def test_exception_handled_in_outside_context():
 
 def test_supported_errors_handled():
     """
-    Only TypeError, ValueError and KeyError that occurred during the validation
+    Only TypeError, ValueError and KeyError occurred during the validation
     are handled as expected. Any error thrown inside of the context will raise APIError.
     See `test_unsupported_errors_handled()`.
     """
