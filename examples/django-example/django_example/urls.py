@@ -17,7 +17,7 @@ from django.urls import path
 from app.views import *
 
 urlpatterns = [
-    path('api/divide', division_view, name="divide"),
-    path('api/pow', pow_view, name="pow"),
-    path('api/purchase', purchase_view, name="purchase"),
+    path("api/divide", division_view, name="divide"),
+    path("api/pow", pow_view, name="pow"),
+    path("api/purchase", purchase_view, name="purchase"),
 ]

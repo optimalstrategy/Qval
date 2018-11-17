@@ -8,6 +8,7 @@ class _EnvironSettings(object):
     """
     Lookups attribute calls in os.environ.
     """
+
     def __getattr__(self, item):
         item = os.environ.get(item)
         # Support `hasattr()`
@@ -32,6 +33,7 @@ class DummyRequest(object):
         """
         return self.GET
 
+
 Request = DummyRequest
 
 
@@ -48,6 +50,7 @@ def get_module() -> Union[_EnvironSettings, "Module"]:
             break
     return _EnvironSettings() if module is None else import_module(module)
 
+
 module = get_module()
 
 
@@ -61,7 +64,7 @@ def load_symbol(path: Union[object, str]):
     # Path is already a symbol
     if not isinstance(path, str):
         return path
-    _mod, _symbol = path.rsplit('.', maxsplit=1)
+    _mod, _symbol = path.rsplit(".", maxsplit=1)
     return getattr(import_module(_mod), _symbol)
 
 
@@ -81,7 +84,6 @@ except ImportError:
 
     # Define missing symbols
     class APIException(Exception):
-
         def __init__(self, detail: Union[dict, str]):
             self.detail = detail
             self.status_code = HTTP_500_INTERNAL_SERVER_ERROR
@@ -97,6 +99,7 @@ except ImportError:
 # Check if Django is installed
 try:
     from django.http import HttpRequest, JsonResponse
+
     # Exit if DRF is installed
     if REST_FRAMEWORK:
         raise ImportError
@@ -106,8 +109,10 @@ try:
     class HandleAPIExceptionDjango(object):
         def __init__(self, get_response):
             self.get_response = get_response
+
         def __call__(self, request):
             return self.get_response(request)
+
         def process_exception(self, _: Request, exception: Exception):
             if isinstance(exception, APIException):
                 detail = exception.detail
@@ -121,7 +126,7 @@ try:
         logging.warning(
             "Unable to add APIException middleware to the MIDDLEWARE list. "
             "Django does not support APIException handling without DRF integration. "
-            "Define DJANGO_SETTINGS_MODULE or add \'qval.framework_integration.HandleAPIExceptionDjango\' "
+            "Define DJANGO_SETTINGS_MODULE or add 'qval.framework_integration.HandleAPIExceptionDjango' "
             "to the MIDDLEWARE list."
         )
 except ImportError:
@@ -132,6 +137,7 @@ except ImportError:
 if hasattr(module, "QVAL_MAKE_REQUEST_WRAPPER"):
     _make_request = load_symbol(module.QVAL_MAKE_REQUEST_WRAPPER)
 else:
+
     def _make_request(f):
         """
         Wraps default `utils.make_request()` function. Does nothing.

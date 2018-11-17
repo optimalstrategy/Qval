@@ -37,7 +37,7 @@ def division_view():
         return jsonify({"answer": p.a // p.b})
 
 
-@app.route('/api/pow')
+@app.route("/api/pow")
 @qval({"a": float, "b": float})
 def pow_view(request, params):
     """
@@ -64,6 +64,7 @@ purchase_validators = {
     "token": Validator(lambda x: len(x) == 12),
     "item_id": Validator(lambda x: x >= 0),
 }
+
 
 @app.route("/api/purchase")
 @qval(purchase_factories, purchase_validators)

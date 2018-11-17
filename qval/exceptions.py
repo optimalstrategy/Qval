@@ -16,5 +16,6 @@ class InvalidQueryParamException(framework_integration.APIException):
         super().__init__(detail)
         self.status_code = status
 
+
 # Avoid circular imports
 APIException = framework_integration.APIException

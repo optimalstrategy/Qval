@@ -343,8 +343,10 @@ def qval_curry(request: fwk.Request):
     :param request: request instance
     :return: wrapped `qval(..., request_=request)`
     """
+
     @functools.wraps(qval)
     def outer(*args, **kwargs):
         kwargs.setdefault("request_", request)
         return qval(*args, **kwargs)
+
     return outer
