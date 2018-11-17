@@ -318,10 +318,10 @@ def qval(
             # If default request object is provided, simply use it
             if request_ is not None:
                 request = utils.make_request(request_)
-                args.append(request)
+                args.insert(0, request)
             # Otherwise check arguments
             elif isinstance(args[0], (dict, fwk.Request)):
-                # Construct request from dict
+                # And construct request from dict
                 request = args[0] = utils.make_request(args[0])
             elif isinstance(args[1], (dict, fwk.Request)):
                 request = args[1] = utils.make_request(args[1])

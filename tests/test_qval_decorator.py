@@ -71,7 +71,7 @@ def test_params_validated():
 
 
 # Curries qval with a static request (in this case)
-# Useful for frameworks with static request classes (e.g. Flask)
+# Useful in frameworks with global request classes (e.g. Flask)
 def get_curried_qval():
     request = {
         "double": "3.14",
@@ -85,13 +85,13 @@ def get_curried_qval():
 curried_qval  = get_curried_qval()
 
 @curried_qval(factories, validators)
-def view(some_param, request, params):
-    return some_param, request, params
+def view(request, some_param, params):
+    return request, some_param, params
 
 
 def test_curried_qval():
     # Test simple view
-    test, r, params = view("test")
+    r, test, params = view("test")
     assert test == "test"
     assert stats[-1] == r.query_params["observable"]
     assert set(r.query_params.keys()) == set(params.__dct__.keys())
