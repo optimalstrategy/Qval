@@ -39,7 +39,7 @@ def division_view():
 
 @app.route("/api/pow")
 @qval({"a": float, "b": float})
-def pow_view(request, params):
+def exponentiation_view(request, params):
     """
     Note that request parameter is now being provided to the view.
 

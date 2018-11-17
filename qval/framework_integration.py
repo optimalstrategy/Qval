@@ -35,6 +35,7 @@ class DummyRequest(object):
 
 
 Request = DummyRequest
+RequestType = (dict, Request)
 
 
 def get_module() -> Union[_EnvironSettings, "Module"]:
@@ -78,6 +79,7 @@ try:
     )
 
     Request = _Request
+    RequestType += (_Request,)
     REST_FRAMEWORK = True
 except ImportError:
     REST_FRAMEWORK = False
@@ -94,6 +96,7 @@ except ImportError:
 
     if hasattr(module, "QVAL_REQUEST_CLASS"):
         Request = load_symbol(module.QVAL_REQUEST_CLASS)
+        RequestType += (Request,)
 
 
 # Check if Django is installed
@@ -105,6 +108,7 @@ try:
         raise ImportError
 
     Request = HttpRequest
+    RequestType += (Request,)
 
     class HandleAPIExceptionDjango(object):
         def __init__(self, get_response):
@@ -133,6 +137,14 @@ except ImportError:
     pass
 
 
+# Check if falcon is installed
+try:
+    from falcon import Request
+    RequestType += (Request,)
+except ImportError:
+    pass
+
+
 # Check if custom wrapper is provided
 if hasattr(module, "QVAL_MAKE_REQUEST_WRAPPER"):
     _make_request = load_symbol(module.QVAL_MAKE_REQUEST_WRAPPER)
@@ -156,9 +168,38 @@ def setup_flask_error_handlers(app: "flask.Flask"):
 
     @app.errorhandler(APIException)
     def handle_api_exception(error: APIException):
+        """
+        Handles APIException in Flask.
+        """
         response = error.detail
         if isinstance(response, str):
             response = {"error": response}
         response = jsonify(response)
         response.status_code = error.status_code
         return response
+
+
+def setup_falcon_error_handlers(api: "falcon.API"):
+    """
+    Setups error handler for APIException.
+
+    :param api: falcon.API
+    :return:
+    """
+    # try to use faster json library
+    try:
+        import ujson as json
+    except ImportError:
+        import json
+    from falcon import HTTP_400, HTTP_500, Response
+
+    def handle_api_exception(exc: "APIException", _rq, _rp: Response, _p):
+        """
+        Handles APIException in Falcon.
+        """
+        code = HTTP_400 if exc.status_code == 400 else HTTP_500
+        detail = {"error": exc.detail} if isinstance(exc.detail, str) else exc.detail
+        _rp.body = json.dumps(detail)
+        _rp.status = code
+
+    api.add_error_handler(APIException, handler=handle_api_exception)
