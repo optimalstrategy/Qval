@@ -1,14 +1,12 @@
-import os
-import json
 import logging
-import functools
+import os
 from typing import Union, Dict
 from importlib import import_module
 
 
 class _EnvironSettings(object):
     """
-    Lookups attribute calls in the environment.
+    Lookups attribute calls in os.environ.
     """
     def __getattr__(self, item):
         item = os.environ.get(item)
@@ -20,7 +18,7 @@ class _EnvironSettings(object):
 
 class DummyRequest(object):
     """
-    DummyRequest. Used for compatibility with DRF.
+    DummyRequest. Used for compatibility with frameworks.
     """
 
     def __init__(self, params: Dict[str, str]):
@@ -37,9 +35,10 @@ class DummyRequest(object):
 Request = DummyRequest
 
 
-def get_module():
+def get_module() -> Union[_EnvironSettings, "Module"]:
     """
-    Returns module containing app settings.
+    Attempts to load settings module.
+    If none of the supported env variables are defined, returns `_EnvironSettings()` object.
     """
     module = None
     modules = ["DJANGO_SETTINGS_MODULE", "SETTINGS_MODULE"]
@@ -54,18 +53,19 @@ module = get_module()
 
 def load_symbol(path: Union[object, str]):
     """
-    Import symbol using provided path.
+    Imports object using the given path.
 
     :param path: path to an object, e.g. my.module.func_1
     :return: loaded symbol
     """
-    # Path is a symbol
+    # Path is already a symbol
     if not isinstance(path, str):
         return path
     _mod, _symbol = path.rsplit('.', maxsplit=1)
     return getattr(import_module(_mod), _symbol)
 
 
+# Check if DRF is installed
 try:
     from rest_framework.request import Request as _Request
     from rest_framework.exceptions import APIException
@@ -75,7 +75,10 @@ try:
     )
 
     Request = _Request
+    REST_FRAMEWORK = True
 except ImportError:
+    REST_FRAMEWORK = False
+
     # Define missing symbols
     class APIException(Exception):
 
@@ -91,6 +94,41 @@ except ImportError:
         Request = load_symbol(module.QVAL_REQUEST_CLASS)
 
 
+# Check if Django is installed
+try:
+    from django.http import HttpRequest, JsonResponse
+    # Exit if DRF is installed
+    if REST_FRAMEWORK:
+        raise ImportError
+
+    Request = HttpRequest
+
+    class HandleAPIExceptionDjango(object):
+        def __init__(self, get_response):
+            self.get_response = get_response
+        def __call__(self, request):
+            return self.get_response(request)
+        def process_exception(self, _: Request, exception: Exception):
+            if isinstance(exception, APIException):
+                detail = exception.detail
+                if isinstance(detail, str):
+                    detail = {"error": detail}
+                return JsonResponse(detail, status=exception.status_code)
+
+    if hasattr(module, "MIDDLEWARE"):
+        module.MIDDLEWARE.append("qval.framework_integration.HandleAPIExceptionDjango")
+    else:
+        logging.warning(
+            "Unable to add APIException middleware to the MIDDLEWARE list. "
+            "Django does not support APIException handling without DRF integration. "
+            "Define DJANGO_SETTINGS_MODULE or add \'qval.framework_integration.HandleAPIExceptionDjango\' "
+            "to the MIDDLEWARE list."
+        )
+except ImportError:
+    pass
+
+
+# Check if custom wrapper is provided
 if hasattr(module, "QVAL_MAKE_REQUEST_WRAPPER"):
     _make_request = load_symbol(module.QVAL_MAKE_REQUEST_WRAPPER)
 else:
@@ -98,10 +136,7 @@ else:
         """
         Wraps default `utils.make_request()` function. Does nothing.
         """
-        @functools.wraps(f)
-        def wrapper(request):
-            return f(request)
-        return wrapper
+        return f
 
 
 def setup_flask_error_handlers(app: "flask.Flask"):
@@ -113,6 +148,7 @@ def setup_flask_error_handlers(app: "flask.Flask"):
     """
     from flask import jsonify
 
+    @app.errorhandler(APIException)
     def handle_api_exception(error: APIException):
         response = error.detail
         if isinstance(response, str):
@@ -120,5 +156,3 @@ def setup_flask_error_handlers(app: "flask.Flask"):
         response = jsonify(response)
         response.status_code = error.status_code
         return response
-
-    app.errorhandler(APIException)(handle_api_exception)

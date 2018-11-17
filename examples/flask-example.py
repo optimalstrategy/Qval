@@ -4,12 +4,18 @@ from qval import validate, qval_curry, Validator
 from qval.framework_integration import setup_flask_error_handlers
 
 app = Flask(__name__)
+
+# Flask uses one global request object.
+# You can add automatically provide it to the `@qval()` decorator on the each call
+# by executing `qval_curry(request)`.
 qval = qval_curry(request)
+
+# Setup exception handlers
 setup_flask_error_handlers(app)
 
 
 @app.route("/api/divide")
-def divide_view():
+def division_view():
     """
     GET /api/divide?
     param a : int
@@ -69,10 +75,10 @@ def purchase_view(request, params):
     param token   : string, length == 12
 
     Example: GET /api/purchase?item_id=1&price=5.8&token=abcdefghijkl
-             -> {"success": "Item '1' is purchased. Check: 5.92$."
+             -> {"success": "Item '1' has been purchased. Check: 5.92$."
     """
     tax = 0.02
     cost = params.price * Decimal(1 + tax)
     return jsonify({
-        "success": f"Item '{params.item_id}' is purchased. Check: {round(cost, 2)}$."
+        "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
     })
