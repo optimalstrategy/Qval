@@ -148,6 +148,21 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     $ PYTHONPATH=. FLASK_APP=examples/flask-example.py flask run
     ```
 
+4. Similarly to Flask, with Falcon you will need to setup error handlers:
+    ```python
+    import falcon
+    from qval.framework_integration import setup_falcon_error_handlers
+    ...
+    app = falcon.API()
+    setup_falcon_error_handlers(app)
+    ```
+    Full Falcon [example](examples/falcon-example.py) can be found here: `examples/falcon-example.py`.<br>
+    
+    Use the following command to run the app:
+    ```
+    $ PYTHONPATH=. python examples/falcon-example.py
+    ```
+
 ## TODO:
 1. Write docs
 2. Add better error messages
