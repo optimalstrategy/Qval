@@ -6,7 +6,7 @@ from qval.framework_integration import setup_flask_error_handlers
 app = Flask(__name__)
 
 # Flask uses one global request object.
-# You can add automatically provide it to the `@qval()` decorator on the each call
+# You can automatically provide it to the `@qval()` decorator on the each call
 # by executing `qval_curry(request)`.
 qval = qval_curry(request)
 

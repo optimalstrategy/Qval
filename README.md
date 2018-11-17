@@ -1,12 +1,12 @@
 # Qval | Query param validation library
 
 
-### Installation
+## Installation
 ```bash
 $ pip install qval
 ```
 
-# Basic usage
+## Basic usage
 You can use Qval as both a function and a decorator. Function `validate()` accepts 3 positional arguments and 1 named:
 ```python
 # qval.py
@@ -89,7 +89,7 @@ from qval import qval
 from validators import *
 ...
 
-# Any function wrapped with `qval()` must accept request as 
+# Any function or method wrapped with `qval()` must accept request as 
 # either first or second argument, and parameters as last.
 @qval(purchase_factories, purchase_validators)
 def purchase_view(request, params):
@@ -115,6 +115,7 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     support APIException handling without DRF integration. Define DJANGO_SETTINGS_MODULE or 
     add 'qval.framework_integration.HandleAPIExceptionDjango' to the MIDDLEWARE list.
     ```
+    Take a look at plain Django example [here](examples/django-example).
 
 3. If you are using Flask, you will need to setup exception handlers:
     ```python
