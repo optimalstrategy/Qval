@@ -40,8 +40,6 @@ class ExponentiationResource(object):
     @qval({"a": float, "b": float})
     def on_get(self, req: Request, resp: Response, params):
         """
-        Note that request parameter is now being provided to the view.
-
         GET /api/pow?
         param a : float
         param b : float
