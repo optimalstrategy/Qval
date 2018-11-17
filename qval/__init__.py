@@ -1,5 +1,5 @@
 """
-This module convenient provides API to verify query parameters.
+This module provides convenient  API to verify query parameters.
 
 The core class is called `QueryParamValidator`. It accepts 4 arguments:
 - request: Request instance (Any object that has following attributes: GET, query_params and body)
