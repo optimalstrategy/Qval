@@ -17,7 +17,7 @@ def validate(
     validators: Dict[str, Validator] = None,
     # Provide true if you want to access all parameters from the request through the context object.
     box_all: bool = True,
-    # Factories that will be used to convert parameters to python objects (callable[str, any] -> object).
+    # Factories that will be used to convert parameters to python objects (callable[str] -> object).
     **factories,
 ) -> QueryParamValidator: 
 ```
