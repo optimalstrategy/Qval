@@ -242,7 +242,8 @@ class QueryParamValidator(AbstractContextManager):
             text = (
                 f"An error occurred during the validation or inside of the context: exc `{exc_type}` ({exc_val}).\n"
                 f"| Parameters: {self.query_params}\n"
-                f"| Body      : {body}"
+                f"| Body      : {body}\n"
+                f"| Exception:\n"
             )
             utils.log.error(
                 __name__,
@@ -253,6 +254,7 @@ class QueryParamValidator(AbstractContextManager):
                     "request_body": body,
                     "parameters": self.query_params,
                 },
+                exc_info=(exc_type, exc_val, exc_tb),
             )
             raise exceptions.APIException(
                 detail="An error occurred while processing you request. "
@@ -278,7 +280,7 @@ def validate(
         >>> r = {"price": "43.5$", "n_items": "1"}
         >>> currency2f = lambda x: float(x[:-1])
         >>> params = validate(r, price=currency2f, n_items=int
-            ... ).positive("n_items")  # n_items must be greater than 0
+        ...     ).positive("n_items")  # n_items must be greater than 0
         >>> with params as p:
         ...     print(p.price, p.n_items)
         43.5 1
@@ -290,8 +292,7 @@ def validate(
     :return: QueryParamValidator instance
     """
     # Wrap dictionary with request-like object
-    if isinstance(request, dict):
-        request = fwk.DummyRequest(request)
+    request = utils.make_request(request)
     return QueryParamValidator(request, factories, validators, box_all)
 
 
@@ -344,6 +345,7 @@ def qval(
 def qval_curry(request: fwk.Request):
     """
     Wraps `qval()` decorator to provide given request object on each call.
+
     :param request: request instance
     :return: wrapped `qval(..., request_=request)`
     """

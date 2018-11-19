@@ -1,13 +1,24 @@
 # Qval | Query param validation library
 
 
+* [Installation](#installation)
+* [Basic usage](#basic-usage)
+* [Framework-specific instructions](#framework-specific-instructions)
+  * [Django Rest Framework](#drf)
+  * [Plain Django](#plain-django)
+  * [Flask](#flask)
+  * [Falcon](#falcon)
+* [Docs](#docs)
+    * [Configuration](#configuration)
+    * [Logging](#logging)
+
 ## Installation
 ```bash
 $ pip install qval
 ```
 
 ## Basic usage
-You can use Qval as both a function and a decorator. Function `validate()` accepts 3 positional arguments and 1 named:
+You can use Qval both as a function and as a decorator. Function `validate()` accepts 3 positional arguments and 1 named:
 ```python
 # qval.py
 def validate(
@@ -52,6 +63,7 @@ def division_view(request):
         # In this case we'll get `token`'s length and check if it is equal to 12.
         .eq("token", 12, transform=len)
     )
+    # validation occurs in the context manager
     with params as p:
         return Response({"answer": p.a // p.b})
 ```
@@ -105,10 +117,10 @@ def purchase_view(request, params):
     ...
 ```
 
-## Framework-specific instructions:
-1. Django Rest Framework works straight out of the box. Simply add `@qval()` to your views or use `validate()` inside.
+## Framework-specific instructions
+1. <a name="drf"></a> Django Rest Framework works straight out of the box. Simply add `@qval()` to your views or use `validate()` inside.
 
-2. For Django _without_ DRF you may need to add exception handler to `settings.MIDDLEWARE`. Qval attempts to 
+2. <a name="plain-django"></a> For Django _without_ DRF you may need to add exception handler to `settings.MIDDLEWARE`. Qval attempts to 
 do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the following message:
     ```bash
     WARNING:root:Unable to add APIException middleware to the MIDDLEWARE list. Django does not 
@@ -117,7 +129,7 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     ```
     Take a look at plain Django example [here](examples/django-example).
 
-3. If you are using Flask, you will need to setup exception handlers:
+3. <a name="flask"></a>If you are using Flask, you will need to setup exception handlers:
     ```python
     from flask import Flask
     from qval.framework_integration import setup_flask_error_handlers
@@ -148,7 +160,7 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     $ PYTHONPATH=. FLASK_APP=examples/flask-example.py flask run
     ```
 
-4. Similarly to Flask, with Falcon you will need to setup error handlers:
+4. <a name="falcon"></a>Similarly to Flask, with Falcon you will need to setup error handlers:
     ```python
     import falcon
     from qval.framework_integration import setup_falcon_error_handlers
@@ -163,6 +175,67 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     $ PYTHONPATH=. python examples/falcon-example.py
     ```
 
+## Docs
+### Configuration
+Qval supports configuration via config files and environmental variables. 
+If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` are defined, the specified config module will be used. Otherwise, 
+all lookups would be done in `os.environ`. <p>
+Supported variables:
+* `QVAL_MAKE_REQUEST_WRAPPER = myapp.myfile.my_func`. Customizes behaviour of the `make_request()` function, 
+which is applied to all incoming requests, then result is passed to `qval.qval.QueryParamValidator`. 
+The provided function must accept `request` and return object that supports request interface 
+(see `qval.framework_integration.DummyReqiest`).
+<br>For example, the following code adds logging to the each `make_request()` call:
+
+    ```python
+    # app/utils.py
+    def my_wrapper(f):
+        @functools.wraps(f)
+        def wrapper(request):
+            print(f"Received new request: {request}")
+            return f(request)
+        return wrapper
+    ```
+    Also you need to execute `export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
+    or to add it to the config file.
+* `QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. `@qval()` will use it to determine which argument is a request. 
+If you has a custom request class that implements `qval.framework_integration.DummyRequest` interface, provide it with this variable.
+
+*  `QVAL_LOGGERS = [mylogger.factory, ...] | mylogger.factory`. List of paths or path to a factory callable. 
+Specified callable must return object with `Logger` interface. See section [logging](#logging) for more info.
+
+### Logging
+Qval uses a global `log` object acting as singleton when reporting errors. By default, `logging.getLogger` 
+function is used as factory on the each call. You can provide your own factory (see [configuration](#configuration)) or disable the logging. Example error message:
+```bash
+An error occurred during the validation or inside of the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
+| Parameters: <QueryDict: {'a': ['2.2324'], 'b': ['30000000']}>
+| Body      : b''
+| Exception:
+Traceback (most recent call last):
+  File "<path>/qval/qval.py", line 338, in inner
+    return f(*args, params, **kwargs)
+  File "<path>/examples/django-example/app/views.py", line 46, in pow_view
+    return JsonResponse({"answer": params.a ** params.b})
+OverflowError: (34, 'Numerical result out of range')
+Internal Server Error: /api/pow
+[19/Nov/2018 07:03:15] "GET /api/pow?a=2.2324&b=30000000 HTTP/1.1" 500 102
+```
+
+Import the object from `qval` and configure as you need:
+```python
+from qval import log
+# For instance, disable logging:
+log.disable()
+```
+
+<br>API [[source](qval/utils.py)]:
+* `enable()`: enables logging
+* `disable()`: disables logging
+* `add_logger(factory)`: adds logging factory to the list
+* `clear()`: removes all saved factories
+* `error(name, *loga, **logkw)`: executes each factory with `name`, then provides `*loga` and `**logkw` to `error()` method of the built object.
+
+
 ## TODO:
 1. Write docs
-2. Add better error messages

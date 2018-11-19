@@ -2,6 +2,7 @@ import logging
 from pprint import pformat
 from typing import Dict, Any, List, Callable, Union
 
+from qval.framework_integration import load_symbol
 from . import framework_integration as fwk
 
 
@@ -13,7 +14,7 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
     Behavior of this function can be customized with the `@_make_request()` decorator.
     Provide path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in your settings files
     or set it as an environment variable. The wrapper function must accept `request` as parameter and
-    return object that supports request interface
+    return object that supports request interface.
 
     For example, the following code adds print to the each function call:
     ::
@@ -22,7 +23,7 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
         def my_wrapper(f):
             @functools.wraps(f)
             def wrapper(request):
-                print(f"Got new request: {request}")
+                print(f"Received new request: {request}")
                 return f(request)
             return wrapper
 
@@ -194,7 +195,12 @@ class ExcLogger(object):
         """
         module = fwk.get_module()
         if hasattr(module, "QVAL_LOGGERS"):
-            loggers = module.QVAL_LOGGERS
+            _loggers = module.QVAL_LOGGERS
+            loggers = []
+            if isinstance(_loggers, (tuple, list)):
+                loggers.extend(load_symbol(log) for log in loggers)
+            else:
+                loggers.append(load_symbol(_loggers))
         else:
             loggers = [logging.getLogger]
 

@@ -1,5 +1,6 @@
 # coding: utf-8
 import os
+import signal
 from subprocess import Popen, PIPE
 
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
@@ -14,7 +15,8 @@ def execute(command: str) -> Popen:
     :return: Popen instance
     """
     cmd = f"cd {EX_DIR} && {command}"
-    proc = Popen(cmd, shell=True, stdout=PIPE)
+    proc = Popen(cmd, shell=True, stdout=PIPE, preexec_fn=os.setsid)
+    proc.exterminate = lambda: os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
     return proc
 
 
