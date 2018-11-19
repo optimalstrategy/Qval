@@ -140,6 +140,7 @@ except ImportError:
 # Check if falcon is installed
 try:
     from falcon import Request
+
     RequestType += (Request,)
 except ImportError:
     pass

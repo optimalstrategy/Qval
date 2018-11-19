@@ -87,11 +87,11 @@ division = DivisionResource()
 exponentiation = ExponentiationResource()
 purchase = PurchaseResource()
 
-app.add_route('/api/divide', division)
-app.add_route('/api/pow', exponentiation)
-app.add_route('/api/purchase', purchase)
+app.add_route("/api/divide", division)
+app.add_route("/api/pow", exponentiation)
+app.add_route("/api/purchase", purchase)
 
 
-if __name__ == '__main__':
-    httpd = simple_server.make_server('127.0.0.1', 8000, app)
+if __name__ == "__main__":
+    httpd = simple_server.make_server("127.0.0.1", 8000, app)
     httpd.serve_forever()
