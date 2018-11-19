@@ -4,19 +4,19 @@ Predicate = Callable[[Any], bool]
 
 
 class Validator(object):
-    """
-    Validates given value using provided predicates.
-    """
+    """Validates given value using provided predicates."""
 
     def __init__(self, *predicates: Predicate):
         # List of predicate functions
         self.predicates = list(predicates)
 
     def add(self, predicate: Predicate) -> "Validator":
-        """
-        Adds new predicate to the list.
+        """Adds new predicate to the list.
+
         :param predicate: predicate function
-        :return: self
+        :param predicate: Predicate: 
+        :returns: self
+
         """
         self.predicates.append(predicate)
         return self
