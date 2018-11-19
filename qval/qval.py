@@ -13,12 +13,16 @@ class QueryParamValidator(AbstractContextManager):
     Validates query parameters.
 
     Examples:
-    Note: see `validate()` for mor examples.
-    >>> r = fwk.DummyRequest({"num": "42", "s": "str", "double": "3.14"})
-    >>> params = QueryParamValidator(r, dict(num=int, s=None, double=float))
-    >>> with params as p:
-        ... print(p.num, p.s, p.double, sep=', ')
-    42, str, 3.14
+        >>> r = fwk.DummyRequest({"num": "42", "s": "str", "double": "3.14"})
+        >>> params = QueryParamValidator(r, dict(num=int, s=None, double=float))
+        >>> with params as p:
+        ...     print(p.num, p.s, p.double, sep=', ')
+        42, str, 3.14
+
+
+    .. automethod:: __enter__
+    .. automethod:: __exit__
+    .. automethod:: _validate
     """
 
     def __init__(
@@ -97,7 +101,7 @@ class QueryParamValidator(AbstractContextManager):
         For example, if value = 10, parameter `param` will be tested as [transform(param) > 0].
 
         :param param: name of the request parameter
-        :param transform: callable that transforms the parameter, default: lambda x: x
+        :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
         :return: self
         """
         return self.check(param, lambda x: transform(x) >= 0)
@@ -111,7 +115,7 @@ class QueryParamValidator(AbstractContextManager):
 
         :param param: name of the request parameter
         :param value: value to compare with
-        :param transform: callable that transforms the parameter, default: lambda x: x
+        :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
         :return: self
         """
         return self.check(param, lambda x: transform(x) > value)
@@ -125,7 +129,7 @@ class QueryParamValidator(AbstractContextManager):
 
         :param param: name of the request parameter
         :param value: value to compare with
-        :param transform: callable that transforms the parameter, default: lambda x: x
+        :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
         :return: self
         """
         return self.check(param, lambda x: transform(x) < value)
@@ -139,7 +143,7 @@ class QueryParamValidator(AbstractContextManager):
 
         :param param: name of the request parameter
         :param value: value to compare with
-        :param transform: callable that transforms the parameter, default: lambda x: x
+        :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
         :return: self
         """
         return self.check(param, lambda x: transform(x) == value)
@@ -152,7 +156,7 @@ class QueryParamValidator(AbstractContextManager):
         For example, if value = 10, parameter `param` will be tested as [transform(param) != 0].
 
         :param param: name of the request parameter
-        :param transform: callable that transforms the parameter, default: lambda x: x
+        :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
         :return: self
         """
         return self.check(param, lambda x: transform(x) != 0)
@@ -172,6 +176,7 @@ class QueryParamValidator(AbstractContextManager):
         """
         Validates the parameters.
         Only KeyError, ValueError and TypeError are handled as expected errors.
+
         :return: None
         """
         # Firstly cast parameters into required types
@@ -210,6 +215,7 @@ class QueryParamValidator(AbstractContextManager):
     def __enter__(self) -> "utils.FrozenBox":
         """
         Runs validation on provided request. See __exit__() for additional info.
+
         :return: box of validated values.
         """
         # This context manager will unwind stack in case of an error.
@@ -264,18 +270,18 @@ def validate(
     Shortcut for QueryParamValidator.
 
     Examples:
-    >>> r = {"num": "42", "s": "str", "double": "3.14"}
-    >>> with validate(r, num=int, s=None, double=float) as p:
-    ...     print(p.num + p.double, p.s)
-    45.14 s
+        >>> r = {"num": "42", "s": "str", "double": "3.14"}
+        >>> with validate(r, num=int, s=None, double=float) as p:
+        ...     print(p.num + p.double, p.s)
+        45.14 s
 
-    >>> r = {"price": "43.5$", "n_items": "1"}
-    >>> currency2f = lambda x: float(x[:-1])
-    >>> params = validate(r, price=currency2f, n_items=int
-        ... ).positive("n_items")  # n_items must be greater than 0
-    >>> with params as p:
-    ...     print(p.price, p.n_items)
-    43.5 1
+        >>> r = {"price": "43.5$", "n_items": "1"}
+        >>> currency2f = lambda x: float(x[:-1])
+        >>> params = validate(r, price=currency2f, n_items=int
+            ... ).positive("n_items")  # n_items must be greater than 0
+        >>> with params as p:
+        ...     print(p.price, p.n_items)
+        43.5 1
 
     :param request: request instance
     :param validators: dictionary of predefined validators
