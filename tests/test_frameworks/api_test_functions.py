@@ -4,6 +4,11 @@ base = "http://localhost:8000/api"
 
 
 def test_divide_parameters_required(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/divide"
     assert requests.get(url).status_code == 400
     assert requests.get(f"{url}?a=10").status_code == 400
@@ -11,12 +16,22 @@ def test_divide_parameters_required(server):
 
 
 def test_divide_parameters_types_validated(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/divide"
     assert requests.get(f"{url}?a=10&b=2.2").status_code == 400
     assert requests.get(f"{url}?a=str&b=string").status_code == 400
 
 
 def test_divide_parameters_validated(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/divide"
     r = requests.get(f"{url}?a=10&b=0")
     assert r.status_code == 400
@@ -24,6 +39,11 @@ def test_divide_parameters_validated(server):
 
 
 def test_divide_success(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/divide"
     r = requests.get(f"{url}?a=10&b=5")
     assert r.status_code == 200
@@ -31,6 +51,11 @@ def test_divide_success(server):
 
 
 def test_pow_parameters_required(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/pow"
     assert requests.get(url).status_code == 400
     assert requests.get(f"{url}?a=10").status_code == 400
@@ -38,11 +63,21 @@ def test_pow_parameters_required(server):
 
 
 def test_pow_parameters_validated(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/pow"
     assert requests.get(f"{url}?a=string&b=str").status_code == 400
 
 
 def test_pow_overflow_error(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/pow"
     r = requests.get(f"{url}?a=2.2324&b=30000000")
     assert r.status_code == 500
@@ -53,6 +88,11 @@ def test_pow_overflow_error(server):
 
 
 def test_pow_success(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/pow"
     r = requests.get(f"{url}?a=2&b=10")
     assert r.status_code == 200
@@ -60,6 +100,11 @@ def test_pow_success(server):
 
 
 def test_purchase_parameters_required(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/purchase"
     params = {"item_id=1", "price=4.2", "token=123456789012"}
     for p1 in params:
@@ -68,6 +113,11 @@ def test_purchase_parameters_required(server):
 
 
 def test_purchase_parameters_validated(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/purchase"
     params = [
         ("-10", "123456789012", "13"),
@@ -82,6 +132,11 @@ def test_purchase_parameters_validated(server):
 
 
 def test_purchase_success(server):
+    """
+
+    :param server: 
+
+    """
     url = f"{base}/purchase"
     r = requests.get(f"{url}?item_id=10&token=123456789012&price=4.04")
     assert r.status_code == 200

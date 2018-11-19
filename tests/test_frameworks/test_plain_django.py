@@ -9,6 +9,11 @@ from test_frameworks.api_test_functions import *
 # Common tests from api_test_function will be tested using django app
 @pytest.fixture(scope="module")
 def server(request):
+    """
+
+    :param request: 
+
+    """
     proc = start_server("django")
     request.addfinalizer(proc.kill)
     # Wait while server is setting up

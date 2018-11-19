@@ -7,6 +7,7 @@ from qval.framework_integration import (
 
 
 def test_params_processed():
+    """ """
     dct = {"num": "42", "double": "2.79", "string": "some string"}
     with validate(dct, num=int, double=float) as p:
         assert p.num == 42
@@ -15,6 +16,7 @@ def test_params_processed():
 
 
 def test_params_omitted():
+    """ """
     dct = {"num": "42", "string": "some string"}
     # Disable auto-detection of parameters (box_all)
     params = validate(dct, num=int, box_all=False)
@@ -25,6 +27,7 @@ def test_params_omitted():
 
 
 def test_missing_param_throws_error():
+    """ """
     dct = {"param1": "whatever", "param2": "6.66"}
     params = validate(dct, param1=None, param2=float, param3=int)
     with pytest.raises(InvalidQueryParamException) as e, params:
@@ -33,6 +36,7 @@ def test_missing_param_throws_error():
 
 
 def test_validator_factory():
+    """ """
     currency2f = lambda x: float(x[:-1])
     r = {
         "price": "43.5$",
@@ -62,6 +66,7 @@ def test_validator_factory():
 
 
 def test_validation_fails():
+    """ """
     currency2f = lambda x: float(x[:-1])
     r = {
         "price": "43.5$",
@@ -92,11 +97,14 @@ def test_validation_fails():
 
 
 def test_exception_handled_in_outside_context():
-    """
-    See `QueryParamValidator._validate()` and `test_supported_errors_handled()` for more info.
-    """
+    """See `QueryParamValidator._validate()` and `test_supported_errors_handled()` for more info."""
     # Random exception.
     def f(_):
+        """
+
+        :param _: 
+
+        """
         raise IOError
 
     r = {"param": "value"}
@@ -106,14 +114,25 @@ def test_exception_handled_in_outside_context():
 
 
 def test_supported_errors_handled():
-    """
-    Only TypeError, ValueError and KeyError occurred during the validation
+    """Only TypeError, ValueError and KeyError occurred during the validation
     are handled as expected. Any error thrown inside of the context will raise APIError.
     See `test_unsupported_errors_handled()`.
+
+
     """
 
     def exc_factory(exc):
+        """
+
+        :param exc: 
+
+        """
         def f(_):
+            """
+
+            :param _: 
+
+            """
             raise exc
 
         return f
@@ -128,6 +147,7 @@ def test_supported_errors_handled():
 
 
 def test_unsupported_errors_handled():
+    """ """
     supported_exceptions = (TypeError, ValueError, KeyError)
     random_exceptions = (IOError, BrokenPipeError, ConnectionError, BufferError)
     r = {"param": "value"}

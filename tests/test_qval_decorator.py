@@ -20,18 +20,34 @@ validators = {"price": Validator(lambda x: x > 0)}
 
 @qval(factories, validators)
 def simple_view(request: Request, params: FrozenBox):
+    """
+
+    :param request: Request: 
+    :param params: FrozenBox: 
+
+    """
     return request, params
 
 
 class ViewClass(object):
+    """ """
     @qval(factories, validators)
     def complex_view(
         self, request: Request, param1: int, param2: int, params: FrozenBox
     ):
+        """
+
+        :param request: Request: 
+        :param param1: int: 
+        :param param2: int: 
+        :param params: FrozenBox: 
+
+        """
         return request, param1, param2, params
 
 
 def test_params_provided():
+    """ """
     request = {
         "double": "3.14",
         "num": "10",
@@ -52,6 +68,7 @@ def test_params_provided():
 
 
 def test_params_validated():
+    """ """
     request = {
         "double": "3.14",
         "num": "10",
@@ -73,6 +90,7 @@ def test_params_validated():
 # Curries qval with a static request (in this case)
 # Useful in frameworks with global request classes (e.g. Flask)
 def get_curried_qval():
+    """ """
     request = {
         "double": "3.14",
         "num": "10",
@@ -88,10 +106,18 @@ curried_qval = get_curried_qval()
 
 @curried_qval(factories, validators)
 def view(request, some_param, params):
+    """
+
+    :param request: 
+    :param some_param: 
+    :param params: 
+
+    """
     return request, some_param, params
 
 
 def test_curried_qval():
+    """ """
     # Test simple view
     r, test, params = view("test")
     assert test == "test"
