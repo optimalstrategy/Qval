@@ -13,17 +13,13 @@ setup_falcon_error_handlers(app)
 
 
 class DivisionResource(object):
-    """ """
     def on_get(self, req: Request, resp: Response):
-        """GET /api/divide?
+        """
+        GET /api/divide?
         param a : int
         param b : int, nonzero
-        
+
         Example: GET /api/divide?a=10&b=2&token=abcdefghijkl -> 200, {"answer": 5}
-
-        :param req: Request: 
-        :param resp: Response: 
-
         """
         # Parameter validation occurs in the context manager.
         # If validation fails or user code throws an error, context manager
@@ -41,23 +37,18 @@ class DivisionResource(object):
 
 
 class ExponentiationResource(object):
-    """ """
     @qval({"a": float, "b": float})
     def on_get(self, req: Request, resp: Response, params):
-        """GET /api/pow?
+        """
+        GET /api/pow?
         param a : float
         param b : float
-        
+
         Example: GET /api/pow?a=2&b=3 -> 200, {"answer": 8.0}
         Example: GET /api/pow?a=2&b=3000000000000 -> 500,
         {
             "error": "An error occurred while processing you request. Please contact the website administrator."
         }
-
-        :param req: Request: 
-        :param resp: Response: 
-        :param params: 
-
         """
         # Here we don't catch the OverflowError if `b` is too big.
         # This will result in 500 error on the client side.
@@ -66,7 +57,6 @@ class ExponentiationResource(object):
 
 
 class PurchaseResource(object):
-    """ """
     purchase_factories = {"price": Decimal, "item_id": int, "token": None}
     purchase_validators = {
         "price": Validator(lambda x: x > 0),
@@ -76,19 +66,14 @@ class PurchaseResource(object):
 
     @qval(purchase_factories, purchase_validators)
     def on_get(selfself, req: Request, resp: Response, params):
-        """GET /api/purchase?
+        """
+        GET /api/purchase?
         param item_id : int, positive
         param price   : float, greater than zero
         param token   : string, length == 12
-        
+
         Example: GET /api/purchase?item_id=1&price=5.8&token=abcdefghijkl
                  -> {"success": "Item '1' has been purchased. Check: 5.92$."
-
-        :param selfself: 
-        :param req: Request: 
-        :param resp: Response: 
-        :param params: 
-
         """
         tax = 0.02
         cost = params.price * Decimal(1 + tax)

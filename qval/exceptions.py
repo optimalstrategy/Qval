@@ -4,7 +4,9 @@ from . import framework_integration
 
 
 class InvalidQueryParamException(framework_integration.APIException):
-    """An error thrown when param fails the validation."""
+    """
+    An error thrown when param fails the validation.
+    """
 
     def __init__(self, detail: Union[dict, str], status: int):
         """
