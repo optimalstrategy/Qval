@@ -10,7 +10,7 @@ from test_frameworks.api_test_functions import *
 @pytest.fixture(scope="module")
 def server(request):
     proc = start_server("falcon")
-    request.addfinalizer(proc.kill)
+    request.addfinalizer(proc.exterminate)
     # Wait while server is setting up
     time.sleep(0.3)
     return proc
