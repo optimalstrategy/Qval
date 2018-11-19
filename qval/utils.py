@@ -7,14 +7,10 @@ from . import framework_integration as fwk
 
 @fwk._make_request
 def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.Request:
-    """Creates DummyRequest if `request` is dictionary, and returns the `request` itself otherwise.
-
+    """
+    Creates DummyRequest if `request` is dictionary, and returns the `request` itself otherwise.
     :param request: dict or request instance
-    :param request: Union[Dict[str: 
-    :param str]: 
-    :param fwk.Request]: 
-    :returns: request
-
+    :return: request
     """
     if isinstance(request, dict):
         return fwk.DummyRequest(request)
@@ -22,7 +18,9 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.Request:
 
 
 class FrozenBox(object):
-    """Frozen dictionary that allows access to elements by `.`."""
+    """
+    Frozen dictionary that allows access to elements by `.`.
+    """
 
     def __init__(self, dct: Dict[Any, Any]):
         """
@@ -79,7 +77,9 @@ class FrozenBox(object):
 
 
 class ExcLogger(object):
-    """A class used in query parameters validation to report critical errors."""
+    """
+    A class used in query parameters validation to report critical errors.
+    """
 
     def __init__(self, logger_factories: List[Callable[[str], Any]]):
         """
@@ -91,55 +91,49 @@ class ExcLogger(object):
 
     @property
     def is_enabled(self) -> bool:
-        """Returns True if logging is enabled."""
+        """
+        Returns True if logging is enabled.
+        """
         return self._enabled
 
     def disable(self):
-        """Disables logging.
+        """
+        Disables logging.
         :return: None
-
-
         """
         self._enabled = False
 
     def enable(self):
-        """Enables logging.
+        """
+        Enables logging.
         :return: None
-
-
         """
         self._enabled = True
 
     def add_logger(self, log_factory: Callable[[str], Any]):
-        """Adds new logger factory to list.
+        """
+        Adds new logger factory to list.
 
         :param log_factory: logger
-        :param log_factory: Callable[[str]: 
-        :param Any]: 
-        :returns: None
-
+        :return: None
         """
         self.factories.append(log_factory)
 
     def clear(self):
-        """Removes all saved factories.
+        """
+        Removes all saved factories.
         :return: None
-
-
         """
         self.factories.clear()
 
     def error(self, name: str, *args, **kwargs):
-        """Creates new logger using provided factories and dumps error message.
+        """
+        Creates new logger using provided factories and dumps error message.
 
         :param name: logger name
         :param args: logger args
         :param kwargs: logger kwargs
-        :param name: str: 
-        :param *args: 
-        :param **kwargs: 
-        :returns: None
-
+        :return: None
         """
         if not self._enabled:
             return
@@ -152,11 +146,10 @@ class ExcLogger(object):
 
     @classmethod
     def detect_loggers(cls) -> "ExcLogger":
-        """Looks for configuration and instantiates ExcLogger with detected loggers
+        """
+        Looks for configuration and instantiates ExcLogger with detected loggers
         or default logging.getLogger
         :return: ExcLogger object
-
-
         """
         module = fwk.get_module()
         if hasattr(module, "QVAL_LOGGERS"):

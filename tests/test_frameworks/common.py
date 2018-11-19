@@ -7,12 +7,11 @@ EX_DIR = os.path.join(BASE_DIR, "examples")
 
 
 def execute(command: str) -> Popen:
-    """Executes given command in the `examples` directory.
+    """
+    Executes given command in the `examples` directory.
 
     :param command: command string
-    :param command: str: 
-    :returns: Popen instance
-
+    :return: Popen instance
     """
     cmd = f"cd {EX_DIR} && {command}"
     proc = Popen(cmd, shell=True, stdout=PIPE)
@@ -20,13 +19,12 @@ def execute(command: str) -> Popen:
 
 
 def start_server(framework: str) -> Popen:
-    """Starts server for the given framework.
+    """
+    Starts server for the given framework.
     Supports django, flask and falcon at the moment.
 
     :param framework: framework name
-    :param framework: str: 
-    :returns: opened process
-
+    :return: opened process
     """
     cmd = f"PYTHONPATH={BASE_DIR}"
     if framework == "django":

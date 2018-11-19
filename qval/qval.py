@@ -9,12 +9,11 @@ from . import framework_integration as fwk
 
 
 class QueryParamValidator(AbstractContextManager):
-    """Validates query parameters.
-    
+    """
+    Validates query parameters.
+
     Examples:
     Note: see `validate()` for mor examples.
-
-
     >>> r = fwk.DummyRequest({"num": "42", "s": "str", "double": "3.14"})
     >>> params = QueryParamValidator(r, dict(num=int, s=None, double=float))
     >>> with params as p:
@@ -52,7 +51,9 @@ class QueryParamValidator(AbstractContextManager):
 
     @property
     def query_params(self) -> Dict[str, str]:
-        """Returns dictionary of query parameters."""
+        """
+        Returns dictionary of query parameters.
+        """
         supported_attrs = ("query_params", "GET", "args", "params")
         for attr in supported_attrs:
             if hasattr(self.request, attr):
@@ -63,15 +64,12 @@ class QueryParamValidator(AbstractContextManager):
         )
 
     def add_predicate(self, param: str, predicate: Callable[[Any], bool]):
-        """Adds new check for provided parameter.
+        """
+        Adds new check for provided parameter.
 
         :param param: name of the request parameter
         :param predicate: predicate function
-        :param param: str: 
-        :param predicate: Callable[[Any]: 
-        :param bool]: 
-        :returns: None
-
+        :return: None
         """
         if param not in self._params:
             self._params[param] = Validator()
@@ -81,15 +79,12 @@ class QueryParamValidator(AbstractContextManager):
     def check(
         self, param: str, predicate: Callable[[Any], bool]
     ) -> "QueryParamValidator":
-        """Adds new check from provided parameter.
+        """
+        Adds new check from provided parameter.
 
         :param param: name of the request parameter
         :param predicate: predicate function
-        :param param: str: 
-        :param predicate: Callable[[Any]: 
-        :param bool]: 
-        :returns: self
-
+        :return: self
         """
         self.add_predicate(param, predicate)
         return self
@@ -97,92 +92,76 @@ class QueryParamValidator(AbstractContextManager):
     def positive(
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
-        """Adds `greater than zero` check for provided parameter.
+        """
+        Adds `greater than zero` check for provided parameter.
         For example, if value = 10, parameter `param` will be tested as [transform(param) > 0].
 
         :param param: name of the request parameter
         :param transform: callable that transforms the parameter, default: lambda x: x
-        :param param: str: 
-        :param transform: Callable[[Any]: 
-        :param Any]:  (Default value = lambda x: x)
-        :returns: self
-
+        :return: self
         """
         return self.check(param, lambda x: transform(x) >= 0)
 
     def gt(
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
-        """Adds `greater than` check for provided parameter.
+        """
+        Adds `greater than` check for provided parameter.
         For example, if value = 10, parameter `param` will be tested as [transform(param) > 10].
 
         :param param: name of the request parameter
         :param value: value to compare with
         :param transform: callable that transforms the parameter, default: lambda x: x
-        :param param: str: 
-        :param value: Any: 
-        :param transform: Callable[[Any]: 
-        :param Any]:  (Default value = lambda x: x)
-        :returns: self
-
+        :return: self
         """
         return self.check(param, lambda x: transform(x) > value)
 
     def lt(
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
-        """Adds `less than` check for provided parameter.
+        """
+        Adds `less than` check for provided parameter.
         For example, if value = 10, parameter `param` will be tested as [transform(param) < 10].
 
         :param param: name of the request parameter
         :param value: value to compare with
         :param transform: callable that transforms the parameter, default: lambda x: x
-        :param param: str: 
-        :param value: Any: 
-        :param transform: Callable[[Any]: 
-        :param Any]:  (Default value = lambda x: x)
-        :returns: self
-
+        :return: self
         """
         return self.check(param, lambda x: transform(x) < value)
 
     def eq(
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
-        """Adds `equals` check for provided parameter.
+        """
+        Adds `equals` check for provided parameter.
         For example, if value = 10, parameter `param` will be tested as [transform(param) == 10].
 
         :param param: name of the request parameter
         :param value: value to compare with
         :param transform: callable that transforms the parameter, default: lambda x: x
-        :param param: str: 
-        :param value: Any: 
-        :param transform: Callable[[Any]: 
-        :param Any]:  (Default value = lambda x: x)
-        :returns: self
-
+        :return: self
         """
         return self.check(param, lambda x: transform(x) == value)
 
     def nonzero(
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
-        """Adds `nonzero` check for provided parameter.
+        """
+        Adds `nonzero` check for provided parameter.
         For example, if value = 10, parameter `param` will be tested as [transform(param) != 0].
 
         :param param: name of the request parameter
         :param transform: callable that transforms the parameter, default: lambda x: x
-        :param param: str: 
-        :param transform: Callable[[Any]: 
-        :param Any]:  (Default value = lambda x: x)
-        :returns: self
-
+        :return: self
         """
         return self.check(param, lambda x: transform(x) != 0)
 
     @contextmanager
     def _cleanup_on_error(self):
-        """Unwinds the stack in case of an error."""
+        """
+        Unwinds the stack in case of an error.
+        """
         with ExitStack() as stack:
             stack.push(self)
             yield
@@ -190,11 +169,10 @@ class QueryParamValidator(AbstractContextManager):
             stack.pop_all()
 
     def _validate(self):
-        """Validates the parameters.
+        """
+        Validates the parameters.
         Only KeyError, ValueError and TypeError are handled as expected errors.
         :return: None
-
-
         """
         # Firstly cast parameters into required types
         for param, cast in self._factories.items():
@@ -282,28 +260,15 @@ def validate(
     box_all: bool = True,
     **factories,
 ) -> QueryParamValidator:
-    """Shortcut for QueryParamValidator.
-    
+    """
+    Shortcut for QueryParamValidator.
+
     Examples:
-
-    :param request: request instance
-    :param validators: dictionary of predefined validators
-    :param box_all: include all params that no specified in factories in the param box
-    :param factories: factories that create python object from string parameters
-    :param request: Union[fwk.Request: 
-    :param Dict[str: 
-    :param str]]: 
-    :param validators: Dict[str: 
-    :param Validator]:  (Default value = None)
-    :param box_all: bool:  (Default value = True)
-    :param **factories: 
-    :returns: QueryParamValidator instance
-
     >>> r = {"num": "42", "s": "str", "double": "3.14"}
     >>> with validate(r, num=int, s=None, double=float) as p:
     ...     print(p.num + p.double, p.s)
     45.14 s
-    
+
     >>> r = {"price": "43.5$", "n_items": "1"}
     >>> currency2f = lambda x: float(x[:-1])
     >>> params = validate(r, price=currency2f, n_items=int
@@ -311,6 +276,12 @@ def validate(
     >>> with params as p:
     ...     print(p.price, p.n_items)
     43.5 1
+
+    :param request: request instance
+    :param validators: dictionary of predefined validators
+    :param box_all: include all params that no specified in factories in the param box
+    :param factories: factories that create python object from string parameters
+    :return: QueryParamValidator instance
     """
     # Wrap dictionary with request-like object
     if isinstance(request, dict):
@@ -324,41 +295,23 @@ def qval(
     box_all: bool = True,
     request_: fwk.Request = None,
 ):
-    """A decorator that validates query parameters.
+    """
+    A decorator that validates query parameters.
     The wrapped function must accept request as first parameter
     (or second if it's a method) and `params` as last.
 
     :param factories: mapping (parameter, callable [str -> Any])
     :param validators: mapping (parameter, validator)
     :param box_all: include all params that no specified in fields in the param box
-    :param factories: Dict[str: 
-    :param Optional[Callable[[str]: 
-    :param Any]]]: 
-    :param validators: Dict[str: 
-    :param Validator]:  (Default value = None)
-    :param box_all: bool:  (Default value = True)
-    :param request_: fwk.Request:  (Default value = None)
-    :returns: wrapped function
-
+    :return: wrapped function
     """
     # Check if decorator is used improperly
     if callable(factories):
         raise TypeError("qval() missing 1 required positional argument: 'factories'")
 
     def outer(f):
-        """
-
-        :param f: 
-
-        """
         @functools.wraps(f)
         def inner(*args, **kwargs):
-            """
-
-            :param *args: 
-            :param **kwargs: 
-
-            """
             args = list(args)
             # If default request object is provided, simply use it
             if request_ is not None:
@@ -383,22 +336,14 @@ def qval(
 
 
 def qval_curry(request: fwk.Request):
-    """Wraps `qval()` decorator to provide given request object on each call.
-
+    """
+    Wraps `qval()` decorator to provide given request object on each call.
     :param request: request instance
-    :param request: fwk.Request: 
-    :returns: wrapped `qval(..., request_=request)`
-
+    :return: wrapped `qval(..., request_=request)`
     """
 
     @functools.wraps(qval)
     def outer(*args, **kwargs):
-        """
-
-        :param *args: 
-        :param **kwargs: 
-
-        """
         kwargs.setdefault("request_", request)
         return qval(*args, **kwargs)
 

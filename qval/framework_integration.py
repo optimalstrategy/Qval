@@ -5,7 +5,9 @@ from importlib import import_module
 
 
 class _EnvironSettings(object):
-    """Lookups attribute calls in os.environ."""
+    """
+    Lookups attribute calls in os.environ.
+    """
 
     def __getattr__(self, item):
         item = os.environ.get(item)
@@ -16,7 +18,9 @@ class _EnvironSettings(object):
 
 
 class DummyRequest(object):
-    """DummyRequest. Used for compatibility with frameworks."""
+    """
+    DummyRequest. Used for compatibility with frameworks.
+    """
 
     def __init__(self, params: Dict[str, str]):
         self.GET = params
@@ -24,7 +28,9 @@ class DummyRequest(object):
 
     @property
     def query_params(self) -> Dict[str, str]:
-        """More semantically correct name for request.GET."""
+        """
+        More semantically correct name for request.GET.
+        """
         return self.GET
 
 
@@ -33,10 +39,9 @@ RequestType = (dict, Request)
 
 
 def get_module() -> Union[_EnvironSettings, "Module"]:
-    """Attempts to load settings module.
+    """
+    Attempts to load settings module.
     If none of the supported env variables are defined, returns `_EnvironSettings()` object.
-
-
     """
     module = None
     modules = ["DJANGO_SETTINGS_MODULE", "SETTINGS_MODULE"]
@@ -51,13 +56,11 @@ module = get_module()
 
 
 def load_symbol(path: Union[object, str]):
-    """Imports object using the given path.
+    """
+    Imports object using the given path.
 
     :param path: path to an object, e.g. my.module.func_1
-    :param path: Union[object: 
-    :param str]: 
-    :returns: loaded symbol
-
+    :return: loaded symbol
     """
     # Path is already a symbol
     if not isinstance(path, str):
@@ -83,7 +86,6 @@ except ImportError:
 
     # Define missing symbols
     class APIException(Exception):
-        """ """
         def __init__(self, detail: Union[dict, str]):
             self.detail = detail
             self.status_code = HTTP_500_INTERNAL_SERVER_ERROR
@@ -109,7 +111,6 @@ try:
     RequestType += (Request,)
 
     class HandleAPIExceptionDjango(object):
-        """ """
         def __init__(self, get_response):
             self.get_response = get_response
 
@@ -117,12 +118,6 @@ try:
             return self.get_response(request)
 
         def process_exception(self, _: Request, exception: Exception):
-            """
-
-            :param _: Request: 
-            :param exception: Exception: 
-
-            """
             if isinstance(exception, APIException):
                 detail = exception.detail
                 if isinstance(detail, str):
@@ -157,30 +152,25 @@ if hasattr(module, "QVAL_MAKE_REQUEST_WRAPPER"):
 else:
 
     def _make_request(f):
-        """Wraps default `utils.make_request()` function. Does nothing.
-
-        :param f: 
-
+        """
+        Wraps default `utils.make_request()` function. Does nothing.
         """
         return f
 
 
 def setup_flask_error_handlers(app: "flask.Flask"):
-    """Setups error handler for APIException.
+    """
+    Setups error handler for APIException.
 
     :param app: flask app
-    :param app: "flask.Flask": 
-    :returns: None
-
+    :return: None
     """
     from flask import jsonify
 
     @app.errorhandler(APIException)
     def handle_api_exception(error: APIException):
-        """Handles APIException in Flask.
-
-        :param error: APIException: 
-
+        """
+        Handles APIException in Flask.
         """
         response = error.detail
         if isinstance(response, str):
@@ -191,11 +181,11 @@ def setup_flask_error_handlers(app: "flask.Flask"):
 
 
 def setup_falcon_error_handlers(api: "falcon.API"):
-    """Setups error handler for APIException.
+    """
+    Setups error handler for APIException.
 
     :param api: falcon.API
-    :param api: "falcon.API": 
-
+    :return:
     """
     # try to use faster json library
     try:
@@ -205,13 +195,8 @@ def setup_falcon_error_handlers(api: "falcon.API"):
     from falcon import HTTP_400, HTTP_500, Response
 
     def handle_api_exception(exc: "APIException", _rq, _rp: Response, _p):
-        """Handles APIException in Falcon.
-
-        :param exc: "APIException": 
-        :param _rq: 
-        :param _rp: Response: 
-        :param _p: 
-
+        """
+        Handles APIException in Falcon.
         """
         code = HTTP_400 if exc.status_code == 400 else HTTP_500
         detail = {"error": exc.detail} if isinstance(exc.detail, str) else exc.detail
