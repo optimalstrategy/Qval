@@ -2,6 +2,7 @@
 This module provides convenient API for verifying query parameters.
 
 The core class is called `QueryParamValidator`. It accepts 4 arguments:
+
 - request: Request instance (Any object that has following attributes: GET, query_params and body)
 
 - factories: Dictionary of factories {param -> factory}. The value of the parameter will be provided
@@ -25,19 +26,19 @@ Example:
     ...     print(p.num)
     42
 
-The code above is to verbose. That's why you should use `validator()` -
-this function does the all boilerplate work for you:
-    - `validator()` automatically converts dictionary to Request-like objects
-    - Key-value arguments are used to provide factories
-    - It's easier to type
+The code above is too verbose. That's why you should use `validate()` -
+this function does all the boilerplate work for you:
+- `validate()` automatically converts dictionary to Request-like objects
+- Key-value arguments are used to provide factories
+- It's easier to type
 
-    Simple example:
+Simple example:
     >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use dictionary instead of Request instance
     >>> with validate(r, num=int, price=float) as p:
     ...     print(p.num, p.price, p.string, sep=', ')
     42, 3.14, s
 
-    A little bit more complex, with custom factory:
+A little bit more complex, with custom factory:
     >>> r = {"price": "2.79$", "tax": "0.5$"}
     >>> currency2f = lambda x: float(x[:-1])  # factory that converts {num}$ to float
     >>> with validate(r, price=currency2f, tax=currency2f) as p:
@@ -54,8 +55,8 @@ You can also use `qval()` decorator:
     >>> view({"num": "10", "special": "0.7"})
     10, 0.7
 
-    If something fails during validation or inside of the function, an error will be thrown.
-    Consider the following examples:
+If something fails during the validation or inside of the function, an error will be thrown.
+Consider the following example:
     >>> factories = {"num": int, "special": int}  # now special is an integer
     >>> @qval(factories, validators=None)  # no validators for simplicity
     ... def view(request, params):
@@ -68,7 +69,7 @@ You can also use `qval()` decorator:
 
     The HTTP code of the exception above is 400 (Bad Request).
 
-    Now the error is raised inside of the context block:
+Now the error is raised inside of the context block:
     >>> factories = {"num": int, "special": float}
     >>> @qval(factories, validators=None)  # no validators for simplicity
     ... def view(request, params):
@@ -76,8 +77,8 @@ You can also use `qval()` decorator:
     >>> view({"num": "10", "special": "0.7"})  # doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
         ...
-    qval.drf_integration.APIException: An error occurred while processing you request.
-                                       Please contact website administrator.
+    qval.framework_integration.APIException: An error occurred while processing you request.
+                                             Please contact website administrator.
 
     The HTTP code of the exception above is 500 (Internal Server Error).
     The error is logged to stdout by default. See the Note section for more info.

@@ -6,9 +6,29 @@ from . import framework_integration as fwk
 
 
 @fwk._make_request
-def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.Request:
+def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType:
     """
-    Creates DummyRequest if `request` is dictionary, and returns the `request` itself otherwise.
+    Creates DummyRequest if `request` is a dictionary, and returns the `request` itself otherwise.
+
+    Behavior of this function can be customized with the `@_make_request()` decorator.
+    Provide path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in your settings files
+    or set it as an environment variable. The wrapper function must accept `request` as parameter and
+    return object that supports request interface
+
+    For example, the following code adds print to the each function call:
+    ::
+
+        # app/utils.py
+        def my_wrapper(f):
+            @functools.wraps(f)
+            def wrapper(request):
+                print(f"Got new request: {request}")
+                return f(request)
+            return wrapper
+
+    Then execute :code:`export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
+    or simply add it to the config file.
+
     :param request: dict or request instance
     :return: request
     """
@@ -19,14 +39,29 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.Request:
 
 class FrozenBox(object):
     """
-    Frozen dictionary that allows access to elements by `.`.
+    Frozen dictionary that allows access to elements by :code:`.`.
+
+    Example:
+        >>> box = FrozenBox({"num": 10, "s": "string"})
+        >>> print(box.num, box.s)
+        10 string
+        >>> box["num"] = 404
+        Traceback (most recent call last):
+            ...
+        TypeError: 'FrozenBox' object does not support item assignment
+        >>> box.num = 404
+        Traceback (most recent call last):
+            ...
+        TypeError: 'FrozenBox' object does not support attribute assignment
+        >>> box.num
+        10
     """
 
     def __init__(self, dct: Dict[Any, Any]):
         """
         :param dct: dict to store
         """
-        self.__dct__ = dct
+        self.__dict__['__dct__'] = dct
 
     def __getitem__(self, item: str) -> Any:
         """
@@ -35,7 +70,7 @@ class FrozenBox(object):
         :param item: item key
         :return: value for key `item`
         """
-        return self.__dct__[item]
+        return self.__dict__['__dct__'][item]
 
     def __getattr__(self, item: str) -> Any:
         """
@@ -44,36 +79,42 @@ class FrozenBox(object):
         :param item: item key
         :return: value
         """
-        if item == "__dct__":
-            return getattr(super(), item)
         return self[item]
+
+    def __setattr__(self, key: str, value: str):
+        """
+        Raises TypeError.
+        """
+        raise TypeError(f"'{self.__class__.__name__}' object does not support attribute assignment")
 
     def __contains__(self, item: str) -> bool:
         """
         Determines if item is inside of the dictionary.
         :param item: item to check
         """
-        return item in self.__dct__
+        return item in self.__dict__['__dct__']
 
     def __iter__(self):
         """
-        Returns iterator over self.__dct__.values()
-        :return:
+        Returns iterator over __dct__.values()
+
+        :return: iterator(__dct__)
         """
-        return iter(self.__dct__)
+        return iter(self.__dict__['__dct__'].items())
 
     def __repr__(self) -> str:
         """
         Returns evaluable representation of the FrozenBox object.
         """
-        return f"FrozenBox({self.__dct__})"
+        return f"FrozenBox({self.__dict__['__dct__']})"
 
     def __str__(self) -> str:
         """
         Returns string representation of the FrozenBox object.
+
         :return: str(box)
         """
-        return f"FrozenBox<{self.__dct__}>"
+        return f"FrozenBox<{self.__dict__['__dct__']}>"
 
 
 class ExcLogger(object):
