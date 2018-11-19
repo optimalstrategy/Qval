@@ -82,6 +82,7 @@ def get_curried_qval():
     }
     return qval_curry(request)
 
+
 curried_qval = get_curried_qval()
 
 
