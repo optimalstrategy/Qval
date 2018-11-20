@@ -1,4 +1,7 @@
 import pytest
+from hypothesis import given, example
+from hypothesis import strategies as st
+
 from qval import validate, APIException, InvalidQueryParamException
 from qval.framework_integration import (
     HTTP_500_INTERNAL_SERVER_ERROR,
@@ -6,12 +9,14 @@ from qval.framework_integration import (
 )
 
 
-def test_params_processed():
-    dct = {"num": "42", "double": "2.79", "string": "some string"}
+@given(st.integers(), st.floats(allow_nan=False), st.text())
+@example(42, 2.79, "string")
+def test_params_processed(num, double, string):
+    dct = {"num": str(num), "double": str(double), "string": string}
     with validate(dct, num=int, double=float) as p:
-        assert p.num == 42
-        assert p.double == 2.79
-        assert p.string == "some string"
+        assert p.num == num
+        assert p.double == double
+        assert p.string == string
 
 
 def test_params_omitted():
@@ -32,15 +37,22 @@ def test_missing_param_throws_error():
     assert e.value.status_code == HTTP_400_BAD_REQUEST
 
 
-def test_validator_factory():
+@given(
+    st.floats(allow_nan=False),
+    st.integers(min_value=0),
+    st.text(),
+    st.integers(max_value=9.9),
+    st.text(min_size=10, max_size=10),
+)
+def test_validator_factory(price, n_items, meta, num2, token):
     currency2f = lambda x: float(x[:-1])
     r = {
-        "price": "43.5$",
-        "n_items": "1",
-        "meta": "info",
-        "num": 10,
-        "num2": 5,
-        "token": "0123456789",
+        "price": f"{price}$",
+        "n_items": str(n_items),
+        "meta": meta,
+        "num": "10",
+        "num2": str(num2),
+        "token": token,
     }
     params = (
         validate(
@@ -58,18 +70,25 @@ def test_validator_factory():
         .eq("token", 10, transform=len)
     )
     with params as p:
-        assert {43.5, 1, "info", 10, 5, "0123456789"} == set(p.__dct__.values())
+        assert {price, n_items, meta, 10, num2, token} == set(p.__dct__.values())
 
 
-def test_validation_fails():
+@given(
+    st.floats(allow_nan=False),
+    st.integers(max_value=0),
+    st.text(),
+    st.integers(min_value=10),
+    st.text(),
+)
+def test_validation_fails(price, n_items, meta, num2, token):
     currency2f = lambda x: float(x[:-1])
     r = {
-        "price": "43.5$",
-        "n_items": "0",
-        "meta": "info",
-        "num": -10,
-        "num2": 20,
-        "token": "012345678",
+        "price": f"{price}$",
+        "n_items": str(n_items),
+        "meta": meta,
+        "num": "42",
+        "num2": str(num2),
+        "token": token,
     }
     params = (
         validate(

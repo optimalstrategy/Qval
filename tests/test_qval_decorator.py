@@ -1,5 +1,8 @@
-import pytest
 from decimal import Decimal
+
+import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 
 from qval import InvalidQueryParamException, qval, qval_curry
 from qval.framework_integration import HTTP_400_BAD_REQUEST, Request
@@ -31,13 +34,14 @@ class ViewClass(object):
         return request, param1, param2, params
 
 
-def test_params_provided():
+@given(st.floats(), st.integers(), st.floats(min_value=1e-10), st.text(), st.text())
+def test_params_provided(double, num, price, s1, s2):
     request = {
-        "double": "3.14",
-        "num": "10",
-        "price": "2.79",
-        "hashme": "s$cret_t0k3n",
-        "observable": "important metric",
+        "double": str(double),
+        "num": str(num),
+        "price": str(price),
+        "hashme": s1,
+        "observable": s2,
     }
     # Test simple view
     r, params = simple_view(request)
@@ -51,13 +55,14 @@ def test_params_provided():
     assert set(r.query_params.keys()) == set(params.__dct__.keys())
 
 
-def test_params_validated():
+@given(st.floats(), st.integers(), st.floats(max_value=0), st.text(), st.text())
+def test_params_validated(double, num, price, s1, s2):
     request = {
-        "double": "3.14",
-        "num": "10",
-        "price": "0",
-        "hashme": "s$cret_t0k3n",
-        "observable": "important metric",
+        "double": str(double),
+        "num": str(num),
+        "price": str(price),
+        "hashme": s1,
+        "observable": s2,
     }
     with pytest.raises(InvalidQueryParamException) as e:
         simple_view(request)
@@ -91,9 +96,10 @@ def view(request, some_param, params):
     return request, some_param, params
 
 
-def test_curried_qval():
+@given(st.text())
+def test_curried_qval(text):
     # Test simple view
-    r, test, params = view("test")
-    assert test == "test"
+    r, test, params = view(text)
+    assert test == text
     assert stats[-1] == r.query_params["observable"]
     assert set(r.query_params.keys()) == set(params.__dct__.keys())
