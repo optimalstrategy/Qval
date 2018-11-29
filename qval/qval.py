@@ -46,7 +46,7 @@ class QueryParamValidator(AbstractContextManager):
         self._box_all = box_all
         self.result: Dict[str, Any] = {
             k: self.query_params[k]
-            # Add all parameters to resulting dictionary of box_all is true.
+            # Add all parameters to resulting dictionary if box_all is true.
             # Otherwise keep only specified parameters.
             for k in (self.query_params if self._box_all else self._factories)
         }
@@ -64,7 +64,7 @@ class QueryParamValidator(AbstractContextManager):
                 return getattr(self.request, attr)
         raise AttributeError(
             "Provided request object has no any of the following attributes: "
-            "`query_params`, `args`, `GET`, `params`."
+            "`query_params`, `args`, `GET`, `params`."  # TODO: use join() instead of hardcoding
         )
 
     def add_predicate(self, param: str, predicate: Callable[[Any], bool]):
@@ -179,7 +179,7 @@ class QueryParamValidator(AbstractContextManager):
 
         :return: None
         """
-        # Firstly cast parameters into required types
+        # Firstly cast parameters to required types
         for param, cast in self._factories.items():
             try:
                 # If cast is None, just leave parameter as a string
