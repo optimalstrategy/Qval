@@ -65,7 +65,7 @@ class PurchaseResource(object):
     }
 
     @qval(purchase_factories, purchase_validators)
-    def on_get(selfself, req: Request, resp: Response, params):
+    def on_get(self, req: Request, resp: Response, params):
         """
         GET /api/purchase?
         param item_id : int, positive
