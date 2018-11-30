@@ -57,6 +57,7 @@ You can also use `qval()` decorator:
 
 If something fails during the validation or inside of the function, an error will be thrown.
 Consider the following example:
+
     >>> factories = {"num": int, "special": int}  # now special is an integer
     >>> @qval(factories, validators=None)  # no validators for simplicity
     ... def view(request, params):
