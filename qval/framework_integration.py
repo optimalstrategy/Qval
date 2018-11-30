@@ -1,5 +1,5 @@
-import logging
 import os
+import logging
 from typing import Union, Dict
 from importlib import import_module
 
@@ -137,6 +137,15 @@ except ImportError:
     pass
 
 
+# Check if flask is installed
+try:
+    from flask import Request
+
+    RequestType += (Request,)
+except ImportError:
+    pass
+
+
 # Check if falcon is installed
 try:
     from falcon import Request
@@ -204,3 +213,8 @@ def setup_falcon_error_handlers(api: "falcon.API"):
         _rp.status = code
 
     api.add_error_handler(APIException, handler=handle_api_exception)
+
+
+# Request is a Union of request types
+# RequestType tuple will be used in typechecks
+Request = Union[RequestType]
