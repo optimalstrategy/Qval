@@ -63,7 +63,7 @@ def division_view(request):
         # In this case we'll get `token`'s length and check if it is equal to 12.
         .eq("token", 12, transform=len)
     )
-    # validation occurs in the context manager
+    # validation starts here
     with params as p:
         return Response({"answer": p.a // p.b})
 ```
@@ -182,7 +182,7 @@ If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` are defined, the specified conf
 all lookups would be done in `os.environ`. <p>
 Supported variables:
 * `QVAL_MAKE_REQUEST_WRAPPER = myapp.myfile.my_func`. Customizes behaviour of the `make_request()` function, 
-which is applied to all incoming requests, then result is passed to `qval.qval.QueryParamValidator`. 
+which is applied to all incoming requests, then the result is passed to `qval.qval.QueryParamValidator`. 
 The provided function must accept `request` and return object that supports request interface 
 (see `qval.framework_integration.DummyReqiest`).
 <br>For example, the following code adds logging to the each `make_request()` call:
@@ -199,14 +199,14 @@ The provided function must accept `request` and return object that supports requ
     Also you need to execute `export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
     or to add it to the config file.
 * `QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. `@qval()` will use it to determine which argument is a request. 
-If you has a custom request class that implements `qval.framework_integration.DummyRequest` interface, provide it with this variable.
+If you have a custom request class that implements `qval.framework_integration.DummyRequest` interface, provide it with this variable.
 
 *  `QVAL_LOGGERS = [mylogger.factory, ...] | mylogger.factory`. List of paths or path to a factory callable. 
 Specified callable must return object with `Logger` interface. See section [logging](#logging) for more info.
 
 ### Logging
 Qval uses a global `log` object acting as singleton when reporting errors. By default, `logging.getLogger` 
-function is used as factory on the each call. You can provide your own factory (see [configuration](#configuration)) or disable the logging. Example error message:
+function is used as a factory on each call. You can provide your own factory (see [configuration](#configuration)) or disable the logging. Example error message:
 ```bash
 An error occurred during the validation or inside of the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
 | Parameters: <QueryDict: {'a': ['2.2324'], 'b': ['30000000']}>
@@ -222,7 +222,7 @@ Internal Server Error: /api/pow
 [19/Nov/2018 07:03:15] "GET /api/pow?a=2.2324&b=30000000 HTTP/1.1" 500 102
 ```
 
-Import the object from `qval` and configure as you need:
+Import the `log` object from `qval` and configure as you need:
 ```python
 from qval import log
 # For instance, disable logging:
