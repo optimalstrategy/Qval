@@ -236,6 +236,8 @@ log.disable()
 * `clear()`: removes all saved factories
 * `error(name, *loga, **logkw)`: executes each factory with `name`, then provides `*loga` and `**logkw` to `error()` method of the built object.
 
+### API
+* class [qval.qval.QueryParamValidator](qval/qval.py)
 
 ## TODO:
 1. Write docs
