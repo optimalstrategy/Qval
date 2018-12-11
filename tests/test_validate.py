@@ -7,6 +7,7 @@ from qval.framework_integration import (
 )
 from tests.crossframework import builder
 
+
 def test_params_processed():
     dct = {"num": "42", "double": "2.79", "string": "some string"}
     for request in builder.iterbuild(dct):

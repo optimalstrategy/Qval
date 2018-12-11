@@ -50,8 +50,8 @@ def get_request_params(request: fwk.RequestType):
         if hasattr(request, attr):
             return getattr(request, attr)
     raise AttributeError(
-        "Provided request object has no any of the following attributes: " 
-        "{}.".format(', '.join(f"`{attr}`" for attr in supported_attrs))
+        "Provided request object has no any of the following attributes: "
+        "{}.".format(", ".join(f"`{attr}`" for attr in supported_attrs))
     )
 
 
@@ -89,7 +89,7 @@ class FrozenBox(object):
         """
         :param dct: dict to store
         """
-        self.__dict__['__dct__'] = dct
+        self.__dict__["__dct__"] = dct
 
     def __getitem__(self, item: str) -> Any:
         """
@@ -98,7 +98,7 @@ class FrozenBox(object):
         :param item: item key
         :return: value for key `item`
         """
-        return self.__dict__['__dct__'][item]
+        return self.__dict__["__dct__"][item]
 
     def __getattr__(self, item: str) -> Any:
         """
@@ -113,14 +113,16 @@ class FrozenBox(object):
         """
         Raises TypeError.
         """
-        raise TypeError(f"'{self.__class__.__name__}' object does not support attribute assignment")
+        raise TypeError(
+            f"'{self.__class__.__name__}' object does not support attribute assignment"
+        )
 
     def __contains__(self, item: str) -> bool:
         """
         Determines if item is inside of the dictionary.
         :param item: item to check
         """
-        return item in self.__dict__['__dct__']
+        return item in self.__dict__["__dct__"]
 
     def __iter__(self):
         """
@@ -128,7 +130,7 @@ class FrozenBox(object):
 
         :return: iterator(__dct__)
         """
-        return iter(self.__dict__['__dct__'].items())
+        return iter(self.__dict__["__dct__"].items())
 
     def __repr__(self) -> str:
         """

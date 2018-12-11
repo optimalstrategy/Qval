@@ -130,7 +130,6 @@ try:
                     detail = {"error": detail}
                 return JsonResponse(detail, status=exception.status_code)
 
-
     def setup_django_middleware(module: "Module" = None):
         """
         Setups exception hanlding middleware.
@@ -142,7 +141,9 @@ try:
             module = get_module()
 
         if hasattr(module, "MIDDLEWARE"):
-            module.MIDDLEWARE.append("qval.framework_integration.HandleAPIExceptionDjango")
+            module.MIDDLEWARE.append(
+                "qval.framework_integration.HandleAPIExceptionDjango"
+            )
         else:
             logging.warning(
                 "Unable to add APIException middleware to the MIDDLEWARE list. "
@@ -151,8 +152,11 @@ try:
                 "to the MIDDLEWARE list."
             )
 
-    # Exit if DRF is installed
-    if hasattr(module, "INSTALLED_APPS") and "rest_framework" not in module.INSTALLED_APPS:
+    # Setup middleware if DRF is not installed
+    if (
+        hasattr(module, "INSTALLED_APPS")
+        and "rest_framework" not in module.INSTALLED_APPS
+    ):
         setup_django_middleware()
 
 except ImportError:

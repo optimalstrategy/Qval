@@ -78,9 +78,11 @@ class PurchaseResource(object):
         tax = 0.02
         cost = params.price * Decimal(1 + tax)
         resp.status = HTTP_200
-        resp.body = json.dumps({
-            "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
-        })
+        resp.body = json.dumps(
+            {
+                "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
+            }
+        )
 
 
 division = DivisionResource()

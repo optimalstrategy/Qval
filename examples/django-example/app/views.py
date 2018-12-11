@@ -59,6 +59,8 @@ def purchase_view(request, params):
     """
     tax = 0.02
     cost = params.price * Decimal(1 + tax)
-    return JsonResponse({
-        "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
-    })
+    return JsonResponse(
+        {
+            "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
+        }
+    )
