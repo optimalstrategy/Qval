@@ -1,4 +1,4 @@
-# Qval | Query param validation library
+# Qval | Query params validation library
 
 
 * [Installation](#installation)
