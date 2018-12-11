@@ -1,5 +1,5 @@
-import logging
 import os
+import logging
 from typing import Union, Dict
 from importlib import import_module
 
@@ -41,7 +41,7 @@ RequestType = (dict, Request)
 def get_module() -> Union[_EnvironSettings, "Module"]:
     """
     Attempts to load settings module.
-    If none of the supported env variables are defined, returns `_EnvironSettings()` object.
+    If none of the supported env variables are defined, returns :class:`_EnvironSettings()` object.
     """
     module = None
     modules = ["DJANGO_SETTINGS_MODULE", "SETTINGS_MODULE"]
@@ -86,7 +86,17 @@ except ImportError:
 
     # Define missing symbols
     class APIException(Exception):
+        """
+        Base class for Qval's exceptions.
+        Used if DRF is not installed.
+        """
+
         def __init__(self, detail: Union[dict, str]):
+            """
+            Instantiates the exception object.
+
+            :param detail: dict or string with details
+            """
             self.detail = detail
             self.status_code = HTTP_500_INTERNAL_SERVER_ERROR
             super().__init__(detail)
@@ -102,10 +112,6 @@ except ImportError:
 # Check if Django is installed
 try:
     from django.http import HttpRequest, JsonResponse
-
-    # Exit if DRF is installed
-    if REST_FRAMEWORK:
-        raise ImportError
 
     Request = HttpRequest
     RequestType += (Request,)
@@ -124,15 +130,44 @@ try:
                     detail = {"error": detail}
                 return JsonResponse(detail, status=exception.status_code)
 
-    if hasattr(module, "MIDDLEWARE"):
-        module.MIDDLEWARE.append("qval.framework_integration.HandleAPIExceptionDjango")
-    else:
-        logging.warning(
-            "Unable to add APIException middleware to the MIDDLEWARE list. "
-            "Django does not support APIException handling without DRF integration. "
-            "Define DJANGO_SETTINGS_MODULE or add 'qval.framework_integration.HandleAPIExceptionDjango' "
-            "to the MIDDLEWARE list."
-        )
+    def setup_django_middleware(module: "Module" = None):
+        """
+        Setups exception hanlding middleware.
+
+        :param module: settings module
+        :return: None
+        """
+        if module is None:
+            module = get_module()
+
+        if hasattr(module, "MIDDLEWARE"):
+            module.MIDDLEWARE.append(
+                "qval.framework_integration.HandleAPIExceptionDjango"
+            )
+        else:
+            logging.warning(
+                "Unable to add APIException middleware to the MIDDLEWARE list. "
+                "Django does not support APIException handling without DRF integration. "
+                "Define DJANGO_SETTINGS_MODULE or add 'qval.framework_integration.HandleAPIExceptionDjango' "
+                "to the MIDDLEWARE list."
+            )
+
+    # Setup middleware if DRF is not installed
+    if (
+        hasattr(module, "INSTALLED_APPS")
+        and "rest_framework" not in module.INSTALLED_APPS
+    ):
+        setup_django_middleware()
+
+except ImportError:
+    pass
+
+
+# Check if flask is installed
+try:
+    from flask import Request
+
+    RequestType += (Request,)
 except ImportError:
     pass
 
@@ -204,3 +239,8 @@ def setup_falcon_error_handlers(api: "falcon.API"):
         _rp.status = code
 
     api.add_error_handler(APIException, handler=handle_api_exception)
+
+
+# Request is a Union of request types
+# RequestType tuple that will be used in type checking
+Request = Union[RequestType]
