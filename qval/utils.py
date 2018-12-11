@@ -38,9 +38,36 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
     return request
 
 
+def get_request_params(request: fwk.RequestType):
+    """
+    Returns dictionary of query parameters of the given request.
+
+    :param request: any supported request
+    :return: dictionary of parameters
+    """
+    supported_attrs = ("query_params", "GET", "args", "params")
+    for attr in supported_attrs:
+        if hasattr(request, attr):
+            return getattr(request, attr)
+    raise AttributeError(
+        "Provided request object has no any of the following attributes: " 
+        "{}.".format(', '.join(f"`{attr}`" for attr in supported_attrs))
+    )
+
+
+def dummyfy(request: fwk.RequestType) -> fwk.DummyRequest:
+    """
+    Constructs :class:`qval.framework_integration.DummyRequest` with params of the given request.
+
+    :param request: any supported request
+    :return: :code:`DummyRequest(request.<params>)`
+    """
+    return fwk.DummyRequest(get_request_params(request))
+
+
 class FrozenBox(object):
     """
-    Frozen dictionary that allows access to elements by :code:`.`.
+    Frozen dictionary that allows accessing elements by :code:`.`
 
     Example:
         >>> box = FrozenBox({"num": 10, "s": "string"})

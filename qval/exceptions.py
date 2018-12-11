@@ -10,6 +10,8 @@ class InvalidQueryParamException(framework_integration.APIException):
 
     def __init__(self, detail: Union[dict, str], status: int):
         """
+        Instantiates the exception.
+
         :param detail: dict or string with details
         :param status: status code
         """

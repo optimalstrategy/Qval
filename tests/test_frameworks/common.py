@@ -15,7 +15,7 @@ def execute(command: str) -> Popen:
     :return: Popen instance
     """
     cmd = f"cd {EX_DIR} && {command}"
-    proc = Popen(cmd, shell=True, stdout=PIPE, preexec_fn=os.setsid)
+    proc = Popen(cmd, shell=True, preexec_fn=os.setsid)
     proc.exterminate = lambda: os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
     return proc
 

@@ -44,6 +44,8 @@ class QueryParamValidator(AbstractContextManager):
         self.request = request
         self._factories = factories
         self._box_all = box_all
+        self._query_params = utils.get_request_params(self.request)
+
         self.result: Dict[str, Any] = {
             k: self.query_params[k]
             # Add all parameters to resulting dictionary if box_all is true.
@@ -58,14 +60,7 @@ class QueryParamValidator(AbstractContextManager):
         """
         Returns dictionary of query parameters.
         """
-        supported_attrs = ("query_params", "GET", "args", "params")
-        for attr in supported_attrs:
-            if hasattr(self.request, attr):
-                return getattr(self.request, attr)
-        raise AttributeError(
-            "Provided request object has no any of the following attributes: "
-            "`query_params`, `args`, `GET`, `params`."  # TODO: use join() instead of hardcoding
-        )
+        return self._query_params
 
     def add_predicate(self, param: str, predicate: Callable[[Any], bool]):
         """
