@@ -4,11 +4,7 @@ from qval.utils import FrozenBox
 
 @pytest.fixture()
 def dct():
-    return {
-        "string": "string",
-        "number": 0x420000,
-        "double": 3.141592,
-    }
+    return {"string": "string", "number": 0x420000, "double": 3.141_592}
 
 
 def test_box_is_immutable(dct):
@@ -23,7 +19,7 @@ def test_box_is_immutable(dct):
     assert box.number == 0x420000
 
     with pytest.raises(TypeError):
-        box['new_key'] = 10
+        box["new_key"] = 10
 
     with pytest.raises(TypeError):
         box.new_key = 10
@@ -51,4 +47,4 @@ def test_error_on_unknown_keys(dct):
         box.random
 
     with pytest.raises(KeyError):
-        box['key']
+        box["key"]

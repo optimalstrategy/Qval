@@ -43,6 +43,7 @@ builder = RequestBuilder()
 try:
     import django.http
     from django.conf import settings
+
     settings.configure()
 
     def build_django(params: Dict[str, Any]) -> django.http.HttpRequest:
