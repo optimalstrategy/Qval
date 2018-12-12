@@ -22,7 +22,6 @@ class QueryParamValidator(AbstractContextManager):
 
     .. automethod:: __enter__
     .. automethod:: __exit__
-    .. automethod:: _validate
     """
 
     def __init__(
@@ -36,10 +35,10 @@ class QueryParamValidator(AbstractContextManager):
         Instantiates query validator object.
 
         :param request: fwk.Request instance
-        :param factories: mapping of {param -> factory}. Providing none as factory is equivalent to str or lambda x: x,
-                       since params are stored as strings.
+        :param factories: mapping of :code:`{param -> factory}`. Providing none as factory is equivalent to :code:`str`
+                       or :code:`lambda x: x`, since params are stored as strings.
         :param validators: dictionary of pre-defined validators
-        :param box_all: include all params, even if they're not specified in `factories`
+        :param box_all: include all params, even if they're not specified in :code:`factories`
         """
         self.request = request
         self._factories = factories
@@ -92,8 +91,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds `greater than zero` check for provided parameter.
-        For example, if value = 10, parameter `param` will be tested as [transform(param) > 0].
+        Adds greater than zero comparison check for provided parameter.
+        Provided :code:`param` will be tested as [:code:`transform(param) > 0`].
 
         :param param: name of the request parameter
         :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
@@ -105,8 +104,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds `greater than` check for provided parameter.
-        For example, if value = 10, parameter `param` will be tested as [transform(param) > 10].
+        Adds greater than comparison check for provided parameter.
+        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) > 10`].
 
         :param param: name of the request parameter
         :param value: value to compare with
@@ -119,8 +118,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds `less than` check for provided parameter.
-        For example, if value = 10, parameter `param` will be tested as [transform(param) < 10].
+        Adds less than comparison check for provided parameter.
+        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) < 10`].
 
         :param param: name of the request parameter
         :param value: value to compare with
@@ -133,8 +132,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds `equals` check for provided parameter.
-        For example, if value = 10, parameter `param` will be tested as [transform(param) == 10].
+        Adds equality check for provided parameter.
+        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) == 10`].
 
         :param param: name of the request parameter
         :param value: value to compare with
@@ -147,8 +146,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds `nonzero` check for provided parameter.
-        For example, if value = 10, parameter `param` will be tested as [transform(param) != 0].
+        Adds nonzero check for provided parameter.
+        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) != 0`].
 
         :param param: name of the request parameter
         :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
@@ -177,7 +176,7 @@ class QueryParamValidator(AbstractContextManager):
         # Firstly cast parameters to required types
         for param, cast in self._factories.items():
             try:
-                # If cast is None, just leave parameter as a string
+                # If cast is None, just leave parameter a string
                 cast = cast or (lambda x: x)
                 value = cast(self.query_params[param])
                 self.result[param] = value
@@ -228,10 +227,9 @@ class QueryParamValidator(AbstractContextManager):
         :param exc_type: exception type
         :param exc_val: exception instance
         :param exc_tb: exception traceback
-        :return:
+        :return: None
         """
         # Report unexpected exceptions
-        # TODO: better error messages
         if exc_type not in (exceptions.InvalidQueryParamException, None):
             body = getattr(self.request, "body", {})
             text = (

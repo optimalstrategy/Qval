@@ -1,5 +1,5 @@
 # Qval | Query params validation library
-
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 * [Installation](#installation)
 * [Basic usage](#basic-usage)
@@ -22,13 +22,13 @@ You can use Qval both as a function and as a decorator. Function `validate()` ac
 ```python
 # qval.py
 def validate(
-    # Request instance. Must be a dictionary or support request interface.
+    # Request instance. Must be a dictionary or implement request interface.
     request: Union[Request, Dict[str, str]],
     # Dictionary of (param_name -> `Validator()` object).
     validators: Dict[str, Validator] = None,
-    # Provide true if you want to access all parameters from the request through the context object.
+    # Provide true if you want to access all parameters of the request in the context.
     box_all: bool = True,
-    # Factories that will be used to convert parameters to python objects (callable[str] -> object).
+    # Factories that will be used to convert parameters to python objects (param -> [callable[str] => object]).
     **factories,
 ) -> QueryParamValidator: 
 ```
