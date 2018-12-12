@@ -9,7 +9,7 @@ jobs:
         - run: mkdir test-reports
         - run: pip install tox codecov && tox
         - run: mv coverage.xml test-reports/coverage.xml
-        - run: codecov report
+        - run: coverage report
         - store_test_results:
            path: test-reports
         - store_artifacts:
