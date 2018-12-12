@@ -9,12 +9,13 @@ from . import framework_integration as fwk
 @fwk._make_request
 def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType:
     """
-    Creates DummyRequest if `request` is a dictionary, and returns the `request` itself otherwise.
+    Creates DummyRequest if :code:`request` is a dictionary, and returns the :code:`request` itself otherwise.
 
-    Behavior of this function can be customized with the `@_make_request()` decorator.
-    Provide path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in your settings files
-    or set it as an environment variable. The wrapper function must accept `request` as parameter and
-    return object that supports request interface.
+    Behavior of this function can be customized with the
+    :func:`@_make_request() <qval.framework_integration._make_request>` decorator.
+    Provide path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in the settings file
+    or set it as an environment variable. The wrapper function must accept :code:`request` as parameter and
+    return object that implements request interface.
 
     For example, the following code adds print to the each function call:
     ::
@@ -55,7 +56,7 @@ def get_request_params(request: fwk.RequestType):
     )
 
 
-def dummyfy(request: fwk.RequestType) -> fwk.DummyRequest:
+def dummyfy(request: fwk.Request) -> fwk.DummyRequest:
     """
     Constructs :class:`qval.framework_integration.DummyRequest` with params of the given request.
 
@@ -126,21 +127,21 @@ class FrozenBox(object):
 
     def __iter__(self):
         """
-        Returns iterator over __dct__.values()
+        Returns iterator over :code:`__dct__.items()`
 
-        :return: iterator(__dct__)
+        :return: :code:`iter(__dct__.items())`
         """
         return iter(self.__dict__["__dct__"].items())
 
     def __repr__(self) -> str:
         """
-        Returns evaluable representation of the FrozenBox object.
+        Returns evaluable representation of the :class:`FrozenBox` object.
         """
         return f"FrozenBox({self.__dict__['__dct__']})"
 
     def __str__(self) -> str:
         """
-        Returns string representation of the FrozenBox object.
+        Returns string representation of the :class:`FrozenBox` object.
 
         :return: str(box)
         """
@@ -149,12 +150,13 @@ class FrozenBox(object):
 
 class ExcLogger(object):
     """
-    A class used in query parameters validation to report critical errors.
+    A class used to report critical errors.
     """
 
     def __init__(self, logger_factories: List[Callable[[str], Any]]):
         """
         Instantiates the ExcLogger.
+
         :param logger_factories: list of logger factories
         """
         self.factories = logger_factories
@@ -170,6 +172,7 @@ class ExcLogger(object):
     def disable(self):
         """
         Disables logging.
+
         :return: None
         """
         self._enabled = False
@@ -177,6 +180,7 @@ class ExcLogger(object):
     def enable(self):
         """
         Enables logging.
+
         :return: None
         """
         self._enabled = True
@@ -220,6 +224,7 @@ class ExcLogger(object):
         """
         Looks for configuration and instantiates ExcLogger with detected loggers
         or default logging.getLogger
+
         :return: ExcLogger object
         """
         module = fwk.get_module()
@@ -246,5 +251,5 @@ class ExcLogger(object):
 # Detect loggers
 log = ExcLogger.detect_loggers()
 
-# Remove ExcLogger, this will make `log` acting as SingleTon
+# Remove ExcLogger, this will make `log` acting as Singleton
 del ExcLogger
