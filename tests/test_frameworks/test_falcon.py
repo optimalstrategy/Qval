@@ -14,5 +14,5 @@ def server(request):
     proc = start_server("falcon")
     request.addfinalizer(proc.exterminate)
     # Wait while server is setting up
-    time.sleep(0.5)
+    time.sleep(1)
     return proc
