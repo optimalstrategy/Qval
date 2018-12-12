@@ -19,7 +19,7 @@ class _EnvironSettings(object):
 
 class DummyRequest(object):
     """
-    DummyRequest. Used for compatibility with frameworks.
+    DummyRequest. Used for compatibility with test_frameworks.
     """
 
     def __init__(self, params: Dict[str, str]):

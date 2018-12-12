@@ -1,5 +1,6 @@
 # Qval | Query params validation library
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Documentation Status](https://readthedocs.org/projects/qval/badge/?version=latest)](https://qval.readthedocs.io/en/latest/?badge=latest)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) 
 
 * [Installation](#installation)
 * [Basic usage](#basic-usage)
@@ -235,9 +236,3 @@ log.disable()
 * `add_logger(factory)`: adds logging factory to the list
 * `clear()`: removes all saved factories
 * `error(name, *loga, **logkw)`: executes each factory with `name`, then provides `*loga` and `**logkw` to `error()` method of the built object.
-
-### API
-* class [qval.qval.QueryParamValidator](qval/qval.py)
-
-## TODO:
-1. Write docs
