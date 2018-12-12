@@ -6,4 +6,11 @@ jobs:
         - image: python:3.6
       steps:
         - checkout
-        - run: pip install tox && tox
+        - run: mkdir test-reports
+        - run: pip install tox codecov && tox
+        - run: mv coverage.xml test_reports/coverage.xml
+        - run: codecov report
+        - store_test_results:
+           path: test-reports
+        - store_artifacts:
+           path: test-reports
