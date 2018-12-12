@@ -19,7 +19,7 @@ In order to use Qval in your project, install it with pip:
 
     $ pip install qval
 
-The usage as simple as:
+The usage is as simple as:
 
    >>> from qval import validate
    >>> with validate({"integer": "10"}, integer=int) as p:
