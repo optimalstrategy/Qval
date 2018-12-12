@@ -14,5 +14,5 @@ def server(request):
     proc = start_server("django")
     request.addfinalizer(proc.exterminate)
     # Wait while server is setting up
-    time.sleep(1)
+    time.sleep(1.5)
     return proc
