@@ -26,7 +26,7 @@ The usage as simple as:
    ...     print(type(p.integer) is int, p.integer)
    True 10
 
-For more verbose a and clear examples refer to :ref:`basic_usage` and
+For more verbose and clear examples refer to :ref:`basic_usage` and
 `examples <https://github.com/OptimalStrategy/Qval/tree/master/examples>`_ in the github `repository <https://github.com/OptimalStrategy/qval>`_.
 
 
