@@ -126,21 +126,21 @@ class FrozenBox(object):
 
     def __iter__(self):
         """
-        Returns iterator over __dct__.values()
+        Returns iterator over :code:`__dct__.items()`
 
-        :return: iterator(__dct__)
+        :return: :code:`iter(__dct__.items())`
         """
         return iter(self.__dict__["__dct__"].items())
 
     def __repr__(self) -> str:
         """
-        Returns evaluable representation of the FrozenBox object.
+        Returns evaluable representation of the :class:`FrozenBox` object.
         """
         return f"FrozenBox({self.__dict__['__dct__']})"
 
     def __str__(self) -> str:
         """
-        Returns string representation of the FrozenBox object.
+        Returns string representation of the :class:`FrozenBox` object.
 
         :return: str(box)
         """
@@ -149,12 +149,13 @@ class FrozenBox(object):
 
 class ExcLogger(object):
     """
-    A class used in query parameters validation to report critical errors.
+    A class used to report critical errors.
     """
 
     def __init__(self, logger_factories: List[Callable[[str], Any]]):
         """
         Instantiates the ExcLogger.
+
         :param logger_factories: list of logger factories
         """
         self.factories = logger_factories
@@ -170,6 +171,7 @@ class ExcLogger(object):
     def disable(self):
         """
         Disables logging.
+
         :return: None
         """
         self._enabled = False
@@ -177,6 +179,7 @@ class ExcLogger(object):
     def enable(self):
         """
         Enables logging.
+
         :return: None
         """
         self._enabled = True
