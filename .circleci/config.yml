@@ -1,0 +1,16 @@
+version: 2
+
+jobs:
+  build:
+      docker:
+        - image: python:3.6
+      steps:
+        - checkout
+        - run: mkdir test-reports
+        - run: pip install tox codecov && tox
+        - run: mv coverage.xml test-reports/coverage.xml
+        - run: coverage report
+        - store_test_results:
+           path: test-reports
+        - store_artifacts:
+           path: test-reports
