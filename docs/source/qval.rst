@@ -1,56 +1,51 @@
-.. _qval-api:
-
+==========
 Qval's API
-============
+==========
+Auto-generated documentation of Qval's code.
 
-Submodules
-----------
 
-qval.exceptions module
-----------------------
-
-.. automodule:: qval.exceptions
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-qval.framework\_integration module
-----------------------------------
-
-.. automodule:: qval.framework_integration
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-qval.qval module
-----------------
+---------
+qval.qval
+---------
 
 .. automodule:: qval.qval
     :members:
     :undoc-members:
     :show-inheritance:
 
-qval.utils module
------------------
-
-.. automodule:: qval.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-qval.validator module
----------------------
+--------------
+qval.validator
+--------------
 
 .. automodule:: qval.validator
     :members:
     :undoc-members:
     :show-inheritance:
 
-
-Module contents
+---------------
+qval.exceptions
 ---------------
 
-.. automodule:: qval
+.. automodule:: qval.exceptions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+----------
+qval.utils
+----------
+
+.. automodule:: qval.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+---------------------------
+qval.framework_integration
+---------------------------
+
+.. automodule:: qval.framework_integration
     :members:
     :undoc-members:
     :show-inheritance:
