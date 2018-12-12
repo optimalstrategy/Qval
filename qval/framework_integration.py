@@ -4,7 +4,7 @@ from typing import Union, Dict
 from importlib import import_module
 
 
-class _EnvironSettings(object):
+class _EnvironSettings(object):  # pragma: no cover
     """
     Lookups attribute calls in os.environ.
     """
@@ -38,7 +38,7 @@ Request = DummyRequest
 RequestType = (dict, Request)
 
 
-def get_module() -> Union[_EnvironSettings, "Module"]:
+def get_module() -> Union[_EnvironSettings, "Module"]:  # pragma: no cover
     """
     Attempts to load settings module.
     If none of the supported env variables are defined, returns :class:`_EnvironSettings()` object.
@@ -55,7 +55,7 @@ def get_module() -> Union[_EnvironSettings, "Module"]:
 module = get_module()
 
 
-def load_symbol(path: Union[object, str]):
+def load_symbol(path: Union[object, str]):  # pragma: no cover
     """
     Imports object using the given path.
 
@@ -81,7 +81,7 @@ try:
     Request = _Request
     RequestType += (_Request,)
     REST_FRAMEWORK = True
-except ImportError:
+except ImportError:  # pragma: no cover
     REST_FRAMEWORK = False
 
     # Define missing symbols
@@ -110,7 +110,7 @@ except ImportError:
 
 
 # Check if Django is installed
-try:
+try:  # pragma: no cover
     from django.http import HttpRequest, JsonResponse
 
     Request = HttpRequest
@@ -159,7 +159,7 @@ try:
     ):
         setup_django_middleware()
 
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 
@@ -168,7 +168,7 @@ try:
     from flask import Request
 
     RequestType += (Request,)
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 
@@ -177,7 +177,7 @@ try:
     from falcon import Request
 
     RequestType += (Request,)
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
 
 
@@ -193,7 +193,7 @@ else:
         return f
 
 
-def setup_flask_error_handlers(app: "flask.Flask"):
+def setup_flask_error_handlers(app: "flask.Flask"):  # pragma: no cover
     """
     Setups error handler for APIException.
 
@@ -215,7 +215,7 @@ def setup_flask_error_handlers(app: "flask.Flask"):
         return response
 
 
-def setup_falcon_error_handlers(api: "falcon.API"):
+def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
     """
     Setups error handler for APIException.
 
