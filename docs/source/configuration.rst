@@ -45,11 +45,11 @@ Logging
 
 Qval uses a global :obj:`log <qval.utils.log>` object acting as singleton when reporting errors. By default,
 :func:`logging.getLogger` function is used as a factory on each call. You can provide your own factory
-(see `Settings`_) or disable the logging. Example dump message:
+(see `Settings`_) or disable the logging. Example error message:
 
 .. code-block:: bash
 
-    An dump occurred during the validation or inside of the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
+    An error occurred during the validation or inside of the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
     | Parameters: <QueryDict: {'a': ['2.2324'], 'b': ['30000000']}>
     | Body      : b''
     | Exception:
