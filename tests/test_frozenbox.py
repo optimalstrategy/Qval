@@ -48,3 +48,13 @@ def test_error_on_unknown_keys(dct):
 
     with pytest.raises(KeyError):
         box["key"]
+
+
+def test_repr_is_valid(dct):
+    box = FrozenBox(dct)
+    assert list(eval(repr(box))) == list(FrozenBox(dct))
+
+
+def test_str_representation(dct):
+    box = FrozenBox(dct)
+    assert str(box) == f"FrozenBox<{dct}>"

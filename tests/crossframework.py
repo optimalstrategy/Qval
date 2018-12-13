@@ -41,9 +41,12 @@ class RequestBuilder(object):
 builder = RequestBuilder()
 
 try:
+    import os
     import django.http
-    from django.conf import settings
+    from django.conf import settings, empty
 
+    # Disable previously configured settings
+    settings._wrapped = empty
     settings.configure()
 
     def build_django(params: Dict[str, Any]) -> django.http.HttpRequest:
@@ -55,9 +58,6 @@ try:
         """
         r = django.http.HttpRequest()
         r.GET.update(params)
-        # TODO: check this
-        # for k, v in params:
-        #     r.GET[k] = v
         return r
 
     builder.register("django", build_django)
