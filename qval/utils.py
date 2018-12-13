@@ -151,6 +151,16 @@ class FrozenBox(object):
 class ExcLogger(object):
     """
     A class used to report critical errors.
+
+    >>> from qval.utils import log
+    >>> log
+    ExcLogger([getLogger])
+    >>> log.is_enabled
+    True
+    >>> log.disable()
+    >>> print(log)
+    ExcLogger<[getLogger], enabled = false>
+
     """
 
     def __init__(self, logger_factories: List[Callable[[str], Any]]):
@@ -201,11 +211,13 @@ class ExcLogger(object):
         """
         self.factories.clear()
 
-    def error(self, name: str, *args, **kwargs):
+    def dump(self, name: str, level: str, *args, **kwargs):
         """
-        Creates new logger using provided factories and dumps error message.
+        Instantiates new loggers using configured factories and provides
+        :code:`*args` and :code:`**kwargs` to built objects.
 
         :param name: logger name
+        :param level: logging level. If built object has no attribute :code:`level`, it will be treated as callable.
         :param args: logger args
         :param kwargs: logger kwargs
         :return: None
@@ -213,43 +225,68 @@ class ExcLogger(object):
         if not self._enabled:
             return
 
-        for log in self.factories:
+        for build in self.factories:
             try:
-                log(name).error(*args, **kwargs)
+                logger = build(name)
+                if hasattr(logger, level):
+                    getattr(logger, level)(*args, **kwargs)
+                else:
+                    logger(*args, **kwargs)
+            except TypeError:
+                raise
             except:
                 pass
 
-    @classmethod
-    def detect_loggers(cls) -> "ExcLogger":
+    def error(self, name: str, *args, **kwargs):
         """
-        Looks for configuration and instantiates ExcLogger with detected loggers
-        or default logging.getLogger
+        Shortcut for :meth:`dump(name, "error", ...) <qval.utils.ExcLogger.dump>`.
 
-        :return: ExcLogger object
+        :param name: logger name
+        :param args: logger args
+        :param kwargs: logger kwargs
+        :return: None
+        """
+        self.dump(name, "error", *args, **kwargs)
+
+    @staticmethod
+    def collect_loggers() -> list:
+        """
+        Looks for configuration and returns list of detected loggers or :func:`logging.getLogger`.
+
+        :return: list of collected loggers
         """
         module = fwk.get_module()
         if hasattr(module, "QVAL_LOGGERS"):
             _loggers = module.QVAL_LOGGERS
-            loggers = []
-            if isinstance(_loggers, (tuple, list)):
-                loggers.extend(load_symbol(log) for log in loggers)
-            else:
-                loggers.append(load_symbol(_loggers))
+            if not isinstance(_loggers, (tuple, list)):
+                _loggers = [_loggers]
+            loggers = [load_symbol(log) for log in _loggers]
         else:
             loggers = [logging.getLogger]
+        return loggers
 
-        return cls(loggers)
+    @classmethod
+    def detect_loggers(cls, silent: bool = False) -> "ExcLogger":
+        """
+        Looks for configuration and instantiates ExcLogger with detected loggers
+        or default :func:`logging.getLogger`.
+
+        :param silent: omit logging test message
+        :return: ExcLogger object
+        """
+        logger = cls(cls.collect_loggers())
+        if not silent:
+            logger.dump(__file__, "info", "test message")
+        return logger
 
     def __repr__(self) -> str:
         return f"ExcLogger([{', '.join(map(lambda x: x.__name__, self.factories))}])"
 
     def __str__(self) -> str:
-        factories = pformat(str(self.factories)).strip("'")
-        return f"ExcLogger({factories}, enabled = {self.is_enabled})"
+        return (
+            f"ExcLogger<[{', '.join(map(lambda x: x.__name__, self.factories))}], "
+            f"enabled = {str(self.is_enabled).lower()}>"
+        )
 
 
-# Detect loggers
 log = ExcLogger.detect_loggers()
-
-# Remove ExcLogger, this will make `log` acting as Singleton
-del ExcLogger

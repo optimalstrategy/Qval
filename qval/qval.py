@@ -268,7 +268,7 @@ def validate(
         >>> r = {"num": "42", "s": "str", "double": "3.14"}
         >>> with validate(r, num=int, s=None, double=float) as p:
         ...     print(p.num + p.double, p.s)
-        45.14 s
+        45.14 str
 
         >>> r = {"price": "43.5$", "n_items": "1"}
         >>> currency2f = lambda x: float(x[:-1])
@@ -303,6 +303,7 @@ def qval(
     :param factories: mapping (parameter, callable [str -> Any])
     :param validators: mapping (parameter, validator)
     :param box_all: include all params that no specified in fields in the param box
+    :param request_: optional request object that can be provided to validator
     :return: wrapped function
     """
     # Check if decorator is used improperly
