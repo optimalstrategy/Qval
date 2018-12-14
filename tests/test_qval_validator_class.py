@@ -27,17 +27,16 @@ def test_chain_validators():
 
     qval = (
         QueryParamValidator(make_request(request), factories)
-            .check("power", lambda x: (x ** 0.5).is_integer())
-            .check("power2", float.is_integer)
-            .eq("num", 42)
-            .gt("num", 41)
-            .lt("num2", 0)
-            .nonzero("num3")
-            .positive("power")
+        .check("power", lambda x: (x ** 0.5).is_integer())
+        .check("power2", float.is_integer)
+        .eq("num", 42)
+        .gt("num", 41)
+        .lt("num2", 0)
+        .nonzero("num3")
+        .positive("power")
     )
     qval.add_predicate(
-        "new_param",
-        lambda x: float(x) not in (float("inf"), float("-inf"))
+        "new_param", lambda x: float(x) not in (float("inf"), float("-inf"))
     )
     for r in builder.iterbuild(request):
         params = qval.apply_to_request(r)
@@ -48,7 +47,6 @@ def test_chain_validators():
             assert p.power == 16
             assert p.power2 == 5
             assert p.new_param == "2.79"
-
 
     bad_examples = {
         "num": "0",  # is not equal to 42

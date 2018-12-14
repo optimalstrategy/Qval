@@ -23,6 +23,7 @@ def make_request_wrapper(f):
     def wrapper(request):
         wrapper.__list__.append(request)
         return f(request)
+
     wrapper.__list__ = []
     return wrapper
 
