@@ -54,6 +54,15 @@ class QueryParamValidator(AbstractContextManager):
         self._params: Dict[str, Validator] = {k: Validator() for k in self.result}
         self._params.update(validators or {})
 
+    def apply_to_request(self, request: fwk.Request) -> "QueryParamValidator":
+        """
+        Applies current validation settings to a new request.
+
+        :param request: new request instance
+        :return: new :class:`QueryParamValidator` instance
+        """
+        return self.__class__(request, self._factories, self._params, self._box_all)
+
     @property
     def query_params(self) -> Dict[str, str]:
         """
@@ -322,7 +331,7 @@ def qval(
             elif isinstance(args[0], fwk.RequestType):
                 # And construct request from dict
                 request = args[0] = utils.make_request(args[0])
-            elif isinstance(args[1], fwk.RequestType):
+            elif len(args) > 1 and isinstance(args[1], fwk.RequestType):
                 request = args[1] = utils.make_request(args[1])
             else:
                 raise ValueError(

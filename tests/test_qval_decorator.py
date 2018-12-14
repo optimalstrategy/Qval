@@ -74,6 +74,30 @@ def test_params_validated():
         assert e.value.status_code == HTTP_400_BAD_REQUEST
 
 
+def test_qval_requires_params():
+    with pytest.raises(TypeError):
+
+        @qval
+        def sample():
+            pass
+
+
+def test_qval_requires_request_argument():
+    @qval({})
+    def sample(request):
+        pass
+
+    with pytest.raises(ValueError):
+        sample(object())
+
+    @qval({})
+    def multi_param(first, second, request):
+        pass
+
+    with pytest.raises(ValueError):
+        multi_param(object(), list(), {})
+
+
 # Curries qval with a static request (in this case)
 # Useful in frameworks with global request classes (e.g. Flask)
 def get_curried_qval():
