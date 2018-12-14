@@ -61,12 +61,7 @@ class QueryParamValidator(AbstractContextManager):
         :param request: new request instance
         :return: new :class:`QueryParamValidator` instance
         """
-        return self.__class__(
-            request,
-            self._factories,
-            self._params,
-            self._box_all
-        )
+        return self.__class__(request, self._factories, self._params, self._box_all)
 
     @property
     def query_params(self) -> Dict[str, str]:

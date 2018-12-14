@@ -76,6 +76,7 @@ def test_params_validated():
 
 def test_qval_requires_params():
     with pytest.raises(TypeError):
+
         @qval
         def sample():
             pass
