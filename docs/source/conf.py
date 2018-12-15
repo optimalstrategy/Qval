@@ -16,9 +16,12 @@
 
 import os
 import sys
-import sphinx_rtd_theme
+from packaging import version as version_
 
 sys.path.insert(0, os.path.abspath("../.."))
+
+import qval
+import sphinx_rtd_theme
 
 
 # -- Project information -----------------------------------------------------
@@ -28,9 +31,12 @@ copyright = "2018, George"
 author = "George"
 
 # The short X.Y version
-version = ""
+version = '.'.join(
+    map(str, version_.parse(qval.__version__).release[:2])
+)
+
 # The full version, including alpha/beta/rc tags
-release = "0.1.99"
+release = qval.__version__
 
 
 # -- General configuration ---------------------------------------------------

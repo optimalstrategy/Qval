@@ -75,11 +75,12 @@ def test_params_validated():
 
 
 def test_qval_requires_params():
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as e:
 
         @qval
         def sample():
             pass
+    assert e.type is TypeError
 
 
 def test_qval_requires_request_argument():
@@ -87,15 +88,17 @@ def test_qval_requires_request_argument():
     def sample(request):
         pass
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as e:
         sample(object())
+    assert e.type is ValueError
 
     @qval({})
     def multi_param(first, second, request):
         pass
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as e:
         multi_param(object(), list(), {})
+    assert e.type is ValueError
 
 
 # Curries qval with a static request (in this case)
