@@ -59,5 +59,6 @@ def test_chain_validators():
 
     for r in builder.iterbuild(bad_examples):
         params = qval.apply_to_request(r)
-        with pytest.raises(InvalidQueryParamException), params:
+        with pytest.raises(InvalidQueryParamException) as e, params:
             pass
+        assert e.type is InvalidQueryParamException

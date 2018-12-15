@@ -78,8 +78,7 @@ class QueryParamValidator(AbstractContextManager):
         :param predicate: predicate function
         :return: None
         """
-        if param not in self._params:
-            self._params[param] = Validator()
+        self._params.setdefault(param, Validator())
         self._params[param].add(predicate)
 
     # Alias for add_predicate; returns reference

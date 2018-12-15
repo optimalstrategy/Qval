@@ -6,7 +6,7 @@ from qval.utils import get_request_params, log, load_symbol
 from tests.crossframework import builder
 
 symbol = lambda x, y: x + y
-QVAL_LOGGERS = [lambda name: lambda v: f"[{name}]: {v}"]
+QVAL_LOGGERS = lambda name: lambda v: f"[{name}]: {v}"
 
 
 def test_get_request_params_rejects_invalid_objects():
@@ -61,6 +61,8 @@ def test_log_add_loggers():
 def test_logging_switch():
     buf = StringIO()
     logger = log.detect_loggers()
+    assert logger.is_enabled
+    logger.enable()
 
     logger.add_logger(lambda name: lambda v: buf.write(f"[{name}]: {v}\n"))
     logger.dump("test", "info", "message")
@@ -71,3 +73,20 @@ def test_logging_switch():
     logger.dump("test", "info", "message")
     assert not logger.is_enabled
     assert buf.getvalue() == "[test]: message\n"
+
+
+def test_log_errors_handling():
+    logger = log.detect_loggers()
+
+    logger.clear()
+    logger.add_logger(lambda _: object())
+
+    with pytest.raises(TypeError) as e:
+        logger.dump(__file__, "message")
+    assert e.type is TypeError
+    logger.clear()
+
+    # int("string") raises ValueError.
+    # Any errors except the TypeError should be ignored.
+    logger.add_logger(lambda _: lambda *__: int("string"))
+    logger.dump(__file__, "message")
