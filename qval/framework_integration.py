@@ -19,7 +19,7 @@ class _EnvironSettings(object):  # pragma: no cover
 
 class DummyRequest(object):
     """
-    DummyRequest. Used for compatibility with test_frameworks.
+    DummyRequest. Used for compatibility with frameworks.
     """
 
     def __init__(self, params: Dict[str, str]):
@@ -241,6 +241,6 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
     api.add_error_handler(APIException, handler=handle_api_exception)
 
 
-# Request is a Union of request types
-# RequestType tuple that will be used in type checking
+# RequestType is a tuple that will be used in type checking
+# Request is a Union of request types and is used in annotations
 Request = Union[RequestType]
