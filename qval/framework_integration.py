@@ -19,7 +19,7 @@ class _EnvironSettings(object):  # pragma: no cover
 
 class DummyRequest(object):
     """
-    DummyRequest. Used for compatibility with frameworks.
+    DummyRequest. Used for compatibility with supported frameworks.
     """
 
     def __init__(self, params: Dict[str, str]):

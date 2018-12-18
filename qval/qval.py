@@ -205,7 +205,7 @@ class QueryParamValidator(AbstractContextManager):
                     status=fwk.HTTP_400_BAD_REQUEST,
                 )
 
-        # Run validations on the each parameter
+        # Run validations on each parameter
         for param, value in self.result.items():
             validator = self._params[param]
             if not validator(value):
@@ -229,8 +229,8 @@ class QueryParamValidator(AbstractContextManager):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
-        If occurred exception is not an InvalidUriParamException, the exception will be re-raised as APIException,
-        which will result in 500 error on the client side.
+        If occurred exception is not an :class:`qval.exceptions.InvalidUriParamException`,
+        the exception will be re-raised as APIException, which will result in 500 error on the client side.
 
         :param exc_type: exception type
         :param exc_val: exception instance
@@ -314,7 +314,7 @@ def qval(
     :param request_: optional request object that can be provided to validator
     :return: wrapped function
     """
-    # Check if decorator is used improperly
+    # Check if decorator is used improperly, i.e without `factories`
     if callable(factories):
         raise TypeError("qval() missing 1 required positional argument: 'factories'")
 
@@ -346,10 +346,10 @@ def qval(
 
 def qval_curry(request: fwk.Request):
     """
-    Wraps `qval()` decorator to provide given request object on each call.
+    Wraps :func:`qval() <qval.qval.qval>` decorator to provide given request object on each call.
 
     :param request: request instance
-    :return: wrapped `qval(..., request_=request)`
+    :return: wrapped :code:`qval(..., request_=request)`
     """
 
     @functools.wraps(qval)
