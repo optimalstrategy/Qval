@@ -1,5 +1,4 @@
 import logging
-from pprint import pformat
 from typing import Dict, Any, List, Callable, Union
 
 from qval.framework_integration import load_symbol

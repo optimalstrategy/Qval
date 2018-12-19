@@ -180,6 +180,9 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     ```
 
 ## Docs
+Refer to [documentation](https://qval.rtfd.io) for more verbose descriptions and auto-generated API docs.
+You can also look at the [tests](tests) to get an idea how the stuff below works.
+
 ### Configuration
 Qval supports configuration via config files and environmental variables. 
 If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` are defined, the specified config module will be used. Otherwise, 
@@ -232,10 +235,3 @@ from qval import log
 # For instance, disable logging:
 log.disable()
 ```
-
-<br>API [[source](qval/utils.py)]:
-* `enable()`: enables logging
-* `disable()`: disables logging
-* `add_logger(factory)`: adds logging factory to the list
-* `clear()`: removes all saved factories
-* `error(name, *loga, **logkw)`: executes each factory with `name`, then provides `*loga` and `**logkw` to `error()` method of the built object.
