@@ -19,5 +19,5 @@ from app.views import *
 urlpatterns = [
     path("api/divide", division_view, name="divide"),
     path("api/pow", pow_view, name="pow"),
-    path("api/purchase", purchase_view, name="purchase"),
+    path("api/purchase", PurchaseView.as_view(), name="purchase"),
 ]
