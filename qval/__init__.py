@@ -84,8 +84,9 @@ Now the error is raised inside of the context block:
     The HTTP code of the exception above is 500 (Internal Server Error).
     The error is logged to stdout by default. See the Note section for more info.
 
-Notes:
-    TODO: add notes
+
+Documentation:
+    Refer to documentation at https://qval.rtfd.io.
 """
 from .utils import log
 from .qval import QueryParamValidator, validate, qval, qval_curry
@@ -93,4 +94,4 @@ from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator
 
 
-__version__ = "0.1.999"
+__version__ = "0.2.0"
