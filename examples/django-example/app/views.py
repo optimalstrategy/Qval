@@ -1,9 +1,8 @@
 from decimal import Decimal
 
+from django.views.generic import DetailView
 from django.http import HttpRequest, JsonResponse
-from qval import qval, validate
-
-from app.validators import *
+from qval import qval, validate, Validator
 
 
 def division_view(request: HttpRequest):
@@ -46,21 +45,30 @@ def pow_view(request, params):
     return JsonResponse({"answer": params.a ** params.b})
 
 
-@qval(purchase_factories, purchase_validators)
-def purchase_view(request, params):
-    """
-    GET /api/purchase?
-    param item_id : int, positive
-    param price   : float, greater than zero
-    param token   : string, length == 12
+class PurchaseView(DetailView):
+    purchase_factories = {"price": Decimal, "item_id": int, "token": None}
 
-    Example: GET /api/purchase?item_id=1&price=5.8&token=abcdefghijkl
-             -> {"success": "Item '1' has been purchased. Check: 5.92$."
-    """
-    tax = 0.02
-    cost = params.price * Decimal(1 + tax)
-    return JsonResponse(
-        {
-            "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
-        }
-    )
+    purchase_validators = {
+        "price": Validator(lambda x: x > 0),
+        "token": Validator(lambda x: len(x) == 12),
+        "item_id": Validator(lambda x: x >= 0),
+    }
+
+    @qval(purchase_factories, purchase_validators)
+    def get(self, request, params):
+        """
+        GET /api/purchase?
+        param item_id : int, positive
+        param price   : float, greater than zero
+        param token   : string, length == 12
+
+        Example: GET /api/purchase?item_id=1&price=5.8&token=abcdefghijkl
+                 -> {"success": "Item '1' has been purchased. Check: 5.92$."
+        """
+        tax = 0.02
+        cost = params.price * Decimal(1 + tax)
+        return JsonResponse(
+            {
+                "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
+            }
+        )
