@@ -72,3 +72,6 @@ class PurchaseView(DetailView):
                 "success": f"Item '{params.item_id}' has been purchased. Check: {round(cost, 2)}$."
             }
         )
+
+
+__all__ = ["division_view", "pow_view", "PurchaseView"]
