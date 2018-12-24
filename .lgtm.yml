@@ -1,3 +1,4 @@
 queries:
-    - exclude: py/syntax-error
+    - exclude: py/syntax-error  # python <3.6 is not supported at all
+    - exclude: py/polluting-import  # this check does not work properly
 
