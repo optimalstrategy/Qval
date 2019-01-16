@@ -90,14 +90,28 @@ Sending b = 0 to this endpoint will result in the following message on the clien
 ```python
 # validators.py
 from decimal import Decimal
-from qval import Validator
+from qval import Validator, QvalValidationError
 ...
+
+def price_validator(price: int) -> bool:
+    """
+    A predicate to validate `price` query parameter.
+    Provides custom error message.
+    """
+    if price <= 0:
+        # If price does not match our requirements, we raise QvalValidationError() with a custom message.
+        # This exception will be handled in the context manager and will be reraised
+        # as InvalidQueryParamException() [HTTP 400].
+        raise QvalValidationError(f"Price must be greater than zero, got \'{price}\'.")
+    return True
+
 
 purchase_factories = {"price": Decimal, "item_id": int, "token": None}
 purchase_validators = {
-    "price": Validator(lambda x: x > 0),
     "token": Validator(lambda x: len(x) == 12),
-    "item_id": Validator(lambda x: x >= 0),
+    # Validator(p) can be omitted if there is only one predicate:
+    "item_id": lambda x: x >= 0,
+    "price": price_validator,
 }
 
 # views.py
@@ -150,8 +164,9 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     qval = qval_curry(request)
     ...
     
-    # Then use it as decorator.
+    # Then use it as a decorator.
     # Note: you view now must accept request as first argument
+    @app.route(...)
     @qval(...)
     def view(request, params): 
     ...

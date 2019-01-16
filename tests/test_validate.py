@@ -1,6 +1,6 @@
 import pytest
 
-from qval import validate, APIException, InvalidQueryParamException
+from qval import validate, APIException, InvalidQueryParamException, QvalValidationError
 from qval.framework_integration import (
     HTTP_500_INTERNAL_SERVER_ERROR,
     HTTP_400_BAD_REQUEST,
@@ -145,3 +145,24 @@ def test_unsupported_errors_handled():
             with pytest.raises(APIException) as e, validate(r):
                 raise exc
             assert e.value.status_code == HTTP_500_INTERNAL_SERVER_ERROR
+
+
+def test_custom_validation_errors():
+    def num_predicate(value: int) -> bool:
+        if not 0 < value < 10:
+            raise QvalValidationError(
+                f"`num` must belong to the interval (0; 10), got '{value}'."
+            )
+        return True
+
+    params = validate({"num": "5"}, {"num": num_predicate}, num=int)
+    with params as p:
+        assert p.num == 5
+
+    try:
+        with params.apply_to_request({"num": "20"}):
+            pass
+    except InvalidQueryParamException as e:
+        assert "`num` must belong to the interval (0; 10), got '20'." in str(
+            e.detail
+        )
