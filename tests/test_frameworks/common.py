@@ -1,7 +1,7 @@
 # coding: utf-8
 import os
 import signal
-from subprocess import Popen, PIPE
+from subprocess import Popen
 
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 EX_DIR = os.path.join(BASE_DIR, "examples")

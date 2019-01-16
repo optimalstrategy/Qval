@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from falcon import Request, Response, API, HTTP_200
 from wsgiref import simple_server
-from qval import qval, validate, Validator
+from qval import qval, validate, Validator, QvalValidationError
 from qval.framework_integration import setup_falcon_error_handlers
 
 app = API()
@@ -57,11 +57,29 @@ class ExponentiationResource(object):
 
 
 class PurchaseResource(object):
+    @staticmethod
+    def price_validator(price: int) -> bool:
+        """
+        A predicate to validate `price` query parameter.
+        Provides custom error message.
+        """
+        if price <= 0:
+            # If price does not match our requirements, we raise QvalValidationError() with a custom message.
+            # This exception will be handled in the context manager and will be reraised
+            # as InvalidQueryParamException() [HTTP 400].
+            raise QvalValidationError(
+                f"Price must be greater than zero, got '{price}'."
+            )
+        return True
+
     purchase_factories = {"price": Decimal, "item_id": int, "token": None}
     purchase_validators = {
-        "price": Validator(lambda x: x > 0),
         "token": Validator(lambda x: len(x) == 12),
-        "item_id": Validator(lambda x: x >= 0),
+        # Validator(p) can be omitted if there is only one predicate:
+        "item_id": lambda x: x >= 0,
+        # Access underlying function without get/set protocol.
+        # In order to avoid this hack, define validators outside of the class.
+        "price": price_validator.__func__,
     }
 
     @qval(purchase_factories, purchase_validators)
