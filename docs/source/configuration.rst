@@ -17,7 +17,7 @@ Supported variables:
     then the result is passed to :class:`qval.qval.QueryParamValidator`. The provided function must accept :code:`request`
     and return object that supports request interface (see :class:`DummyRequest <qval.framework_integration.DummyRequest>`).
 
-  | For example, following code adds logging to the each :func:`make_request() <qval.utils.make_request>` call:
+  | For example, the following code adds print to each :func:`make_request() <qval.utils.make_request>` call:
 
     .. code-block:: python
 

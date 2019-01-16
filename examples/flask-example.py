@@ -1,6 +1,6 @@
 from decimal import Decimal
 from flask import Flask, request, jsonify
-from qval import validate, qval_curry, Validator
+from qval import validate, qval_curry, Validator, QvalValidationError
 from qval.framework_integration import setup_flask_error_handlers
 
 app = Flask(__name__)
@@ -58,11 +58,25 @@ def exponentiation_view(request, params):
     return jsonify({"answer": params.a ** params.b})
 
 
+def price_validator(price: int) -> bool:
+    """
+    A predicate to validate `price` query parameter.
+    Provides custom error message.
+    """
+    if price <= 0:
+        # If price does not match our requirements, we raise QvalValidationError() with a custom message.
+        # This exception will be handled in the context manager and will be reraised
+        # as InvalidQueryParamException() [HTTP 400].
+        raise QvalValidationError(f"Price must be greater than zero, got '{price}'.")
+    return True
+
+
 purchase_factories = {"price": Decimal, "item_id": int, "token": None}
 purchase_validators = {
-    "price": Validator(lambda x: x > 0),
     "token": Validator(lambda x: len(x) == 12),
-    "item_id": Validator(lambda x: x >= 0),
+    # Validator(p) can be omitted if there is only one predicate:
+    "item_id": lambda x: x >= 0,
+    "price": price_validator,
 }
 
 

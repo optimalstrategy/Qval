@@ -33,12 +33,12 @@ this function does all the boilerplate work for you:
 - It's easier to type
 
 Simple example:
-    >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use dictionary instead of Request instance
+    >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use dictionary instead of a Request instance
     >>> with validate(r, num=int, price=float) as p:
     ...     print(p.num, p.price, p.string, sep=', ')
     42, 3.14, s
 
-A little bit more complex, with custom factory:
+A little bit more complex example, with a custom factory:
     >>> r = {"price": "2.79$", "tax": "0.5$"}
     >>> currency2f = lambda x: float(x[:-1])  # factory that converts {num}$ to float
     >>> with validate(r, price=currency2f, tax=currency2f) as p:
@@ -58,7 +58,7 @@ You can also use `qval()` decorator:
 If something fails during the validation or inside of the function, an error will be thrown.
 Consider the following example:
 
-    >>> factories = {"num": int, "special": int}  # now special is an integer
+    >>> factories = {"num": int, "special": int}  # now `special` is an integer
     >>> @qval(factories, validators=None)  # no validators for simplicity
     ... def view(request, params):
     ...     pass
@@ -91,7 +91,7 @@ Documentation:
 from .utils import log
 from .qval import QueryParamValidator, validate, qval, qval_curry
 from .exceptions import InvalidQueryParamException, APIException
-from .validator import Validator
+from .validator import Validator, QvalValidationError
 
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
