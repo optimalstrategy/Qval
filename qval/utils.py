@@ -16,7 +16,7 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
     or set it as an environment variable. The wrapper function must accept :code:`request` as parameter and
     return object that implements request interface.
 
-    For example, the following code adds print to the each function call:
+    For example, the following code adds print to each function call:
     ::
 
         # app/utils.py

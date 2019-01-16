@@ -49,6 +49,7 @@ Since :code:`request` in Flask is a global object, you may want to curry :func:`
 
     # Then use it as a decorator.
     # Note: you view now must accept request as first argument
+    @app.route(...)
     @qval(...)
     def view(request, params):
     ...
