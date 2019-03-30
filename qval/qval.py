@@ -60,7 +60,9 @@ class QueryParamValidator(AbstractContextManager):
             }
         )
 
-    def apply_to_request(self, request: Union[Dict[str, str], fwk.Request]) -> "QueryParamValidator":
+    def apply_to_request(
+        self, request: Union[Dict[str, str], fwk.Request]
+    ) -> "QueryParamValidator":
         """
         Applies current validation settings to a new request.
 

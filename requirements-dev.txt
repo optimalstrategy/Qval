@@ -1,7 +1,9 @@
 alabaster==0.7.12
+appdirs==1.4.3
 atomicwrites==1.2.1
 attrs==18.2.0
 Babel==2.6.0
+black==18.9b0
 certifi==2018.11.29
 chardet==3.0.4
 Click==7.0
@@ -25,6 +27,7 @@ py==1.7.0
 Pygments==2.3.1
 pyparsing==2.3.1
 pytest==4.1.1
+pytest-black==0.3.4
 pytest-cov==2.6.1
 python-mimeparse==1.6.0
 pytz==2018.9
