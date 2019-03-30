@@ -80,6 +80,7 @@ def test_qval_requires_params():
         @qval
         def sample():
             pass
+
     assert e.type is TypeError
 
 

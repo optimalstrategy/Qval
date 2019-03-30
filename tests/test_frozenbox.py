@@ -28,6 +28,7 @@ def test_box_is_immutable(dct):
         box.new_key = 10
     assert e.type is TypeError
 
+
 def test_box_contains_is_valid(dct):
     box = FrozenBox(dct)
 
@@ -53,6 +54,7 @@ def test_error_on_unknown_keys(dct):
     with pytest.raises(KeyError) as e:
         box["key"]
     assert e.type is KeyError
+
 
 def test_repr_is_valid(dct):
     box = FrozenBox(dct)
