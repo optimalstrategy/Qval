@@ -31,9 +31,7 @@ copyright = "2018, George"
 author = "George"
 
 # The short X.Y version
-version = '.'.join(
-    map(str, version_.parse(qval.__version__).release[:2])
-)
+version = ".".join(map(str, version_.parse(qval.__version__).release[:2]))
 
 # The full version, including alpha/beta/rc tags
 release = qval.__version__

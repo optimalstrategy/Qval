@@ -163,6 +163,4 @@ def test_custom_validation_errors():
         with params.apply_to_request({"num": "20"}):
             pass
     except InvalidQueryParamException as e:
-        assert "`num` must belong to the interval (0; 10), got '20'." in str(
-            e.detail
-        )
+        assert "`num` must belong to the interval (0; 10), got '20'." in str(e.detail)
