@@ -73,7 +73,7 @@ def load_symbol(path: Union[object, str]):  # pragma: no cover
 try:
     from rest_framework.request import Request as _Request
     from rest_framework.exceptions import APIException
-    from rest_framework.status import (
+    from rest_framework.status import (  # lgtm [py/unused-import]
         HTTP_400_BAD_REQUEST,
         HTTP_500_INTERNAL_SERVER_ERROR,
     )
