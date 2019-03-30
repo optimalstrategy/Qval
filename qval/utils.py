@@ -233,7 +233,7 @@ class ExcLogger(object):
                     logger(*args, **kwargs)
             except TypeError:
                 raise
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 pass
 
     def error(self, name: str, *args, **kwargs):
