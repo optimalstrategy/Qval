@@ -203,10 +203,10 @@ class QueryParamValidator(AbstractContextManager):
 
         :return: None
         """
-        # Firstly cast parameters to required types
+        # Firstly, cast the parameters to required types
         for param, cast in self._factories.items():
             try:
-                # If cast is None, just leave parameter a string
+                # If cast is None, just leave the parameter a string
                 cast = cast or (lambda x: x)
                 value = cast(self.query_params[param])
                 self.result[param] = value
