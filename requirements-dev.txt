@@ -46,6 +46,6 @@ sphinxcontrib-websupport==1.1.0
 toml==0.10.0
 tox==3.8.6
 ujson==1.35
-urllib3==1.24.1
+urllib3==1.24.2
 virtualenv==16.4.3
 Werkzeug==0.15.2
