@@ -12,7 +12,7 @@ coverage==4.5.3
 Django==2.2
 djangorestframework==3.9.2
 docutils==0.14
-falcon==1.4.1
+falcon==2.0.0
 filelock==3.0.10
 Flask==1.0.2
 idna==2.8
