@@ -227,16 +227,39 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
         import ujson as json
     except ImportError:
         import json
-    from falcon import HTTP_400, HTTP_500, Response
 
-    def handle_api_exception(exc: "APIException", _rq, _rp: Response, _p):
-        """
-        Handles APIException in Falcon.
-        """
-        code = HTTP_400 if exc.status_code == 400 else HTTP_500
-        detail = {"error": exc.detail} if isinstance(exc.detail, str) else exc.detail
-        _rp.body = json.dumps(detail)
-        _rp.status = code
+    from falcon import HTTP_400, HTTP_500, Response, Request, __version__
+
+    major_version = int(__version__.split(".", maxsplit=1)[0])
+
+    # Falcon 2.0.0 changed the order of arguments
+    if major_version >= 2:
+
+        def handle_api_exception(
+            _rq: Request, _rp: Response, exc: "APIException", _p: dict
+        ):
+            """
+            Handles APIException in Falcon.
+            """
+            code = HTTP_400 if exc.status_code == 400 else HTTP_500
+            detail = (
+                {"error": exc.detail} if isinstance(exc.detail, str) else exc.detail
+            )
+            _rp.body = json.dumps(detail)
+            _rp.status = code
+
+    else:
+
+        def handle_api_exception(exc: "APIException", _rq, _rp: Response, _p):
+            """
+            Handles APIException in Falcon.
+            """
+            code = HTTP_400 if exc.status_code == 400 else HTTP_500
+            detail = (
+                {"error": exc.detail} if isinstance(exc.detail, str) else exc.detail
+            )
+            _rp.body = json.dumps(detail)
+            _rp.status = code
 
     api.add_error_handler(APIException, handler=handle_api_exception)
 
