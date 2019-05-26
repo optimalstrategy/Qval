@@ -331,7 +331,7 @@ def qval(
 ):
     """
     A decorator that validates query parameters.
-    The wrapped function must accept request as first parameter
+    The wrapped function must accept a request as the first parameter
     (or second if it's a method) and `params` as last.
 
     :param factories: mapping (parameter, callable [str -> Any])
@@ -348,13 +348,13 @@ def qval(
         @functools.wraps(f)
         def inner(*args, **kwargs):
             args = list(args)
-            # If default request object is provided, simply use it
+            # If a default request object is provided, simply use it
             if request_ is not None:
                 request = utils.make_request(request_)
                 args.insert(0, request)
-            # Otherwise check arguments
+            # Otherwise check the arguments
             elif isinstance(args[0], fwk.RequestType):
-                # And construct request from dict
+                # And construct a request from the dict
                 request = args[0] = utils.make_request(args[0])
             elif len(args) > 1 and isinstance(args[1], fwk.RequestType):
                 request = args[1] = utils.make_request(args[1])
