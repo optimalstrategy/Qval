@@ -48,4 +48,4 @@ tox==3.9.0
 ujson==1.35
 urllib3==1.24.2
 virtualenv==16.5.0
-Werkzeug==0.15.2
+Werkzeug==0.15.4
