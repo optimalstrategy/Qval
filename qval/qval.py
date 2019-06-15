@@ -32,7 +32,7 @@ class QueryParamValidator(AbstractContextManager):
         box_all: bool = True,
     ):
         """
-        Instantiates query validator object.
+        Instantiates the query validator.
 
         :param request: fwk.Request instance
         :param factories: mapping of :code:`{param -> factory}`. Providing :code:`None` as a factory is equivalent to :code:`str`
@@ -47,8 +47,8 @@ class QueryParamValidator(AbstractContextManager):
 
         self.result: Dict[str, Any] = {
             k: self.query_params[k]
-            # Add all parameters to resulting dictionary if box_all is true.
-            # Otherwise keep only specified parameters.
+            # Add all parameters to the resulting dictionary if box_all is true.
+            # Otherwise keep only the specified parameters.
             for k in (self.query_params if self._box_all else self._factories)
         }
         self._params: Dict[str, Validator] = {k: Validator() for k in self.result}
@@ -64,7 +64,7 @@ class QueryParamValidator(AbstractContextManager):
         self, request: Union[Dict[str, str], fwk.Request]
     ) -> "QueryParamValidator":
         """
-        Applies current validation settings to a new request.
+        Applies the current validation settings to a new request.
 
         Example:
             >>> from qval.utils import make_request
@@ -88,13 +88,13 @@ class QueryParamValidator(AbstractContextManager):
     @property
     def query_params(self) -> Dict[str, str]:
         """
-        Returns dictionary of query parameters.
+        Returns the dictionary of query parameters.
         """
         return self._query_params
 
     def add_predicate(self, param: str, predicate: Callable[[Any], bool]):
         """
-        Adds new check for provided parameter.
+        Adds a new check for the provided parameter.
 
         :param param: name of the request parameter
         :param predicate: predicate function
@@ -103,12 +103,12 @@ class QueryParamValidator(AbstractContextManager):
         self._params.setdefault(param, Validator())
         self._params[param].add(predicate)
 
-    # Alias for add_predicate; returns reference
+    # Alias for add_predicate; returns a reference to self
     def check(
         self, param: str, predicate: Callable[[Any], bool]
     ) -> "QueryParamValidator":
         """
-        Adds new check from provided parameter.
+        Adds a new check for the provided parameter.
 
         :param param: name of the request parameter
         :param predicate: predicate function
@@ -121,7 +121,7 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds greater than zero comparison check for provided parameter.
+        Adds the :code:`greater than zero` comparison check for the provided parameter.
         Provided :code:`param` will be tested as [:code:`transform(param) > 0`].
 
         :param param: name of the request parameter
@@ -134,8 +134,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds greater than comparison check for provided parameter.
-        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) > 10`].
+        Adds the :code:`greater than` comparison check for provided parameter.
+        For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) > 10`].
 
         :param param: name of the request parameter
         :param value: value to compare with
@@ -148,8 +148,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds less than comparison check for provided parameter.
-        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) < 10`].
+        Adds the `less than` comparison check for the provided parameter.
+        For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) < 10`].
 
         :param param: name of the request parameter
         :param value: value to compare with
@@ -162,8 +162,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds equality check for provided parameter.
-        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) == 10`].
+        Adds the `equality` check for the provided parameter.
+        For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) == 10`].
 
         :param param: name of the request parameter
         :param value: value to compare with
@@ -176,8 +176,8 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds nonzero check for provided parameter.
-        For example, if value = 10, parameter :code:`param` will be tested as [:code:`transform(param) != 0`].
+        Adds the `nonzero` check for the provided parameter.
+        For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) != 0`].
 
         :param param: name of the request parameter
         :param transform: callable that transforms the parameter, default: :code:`lambda x: x`
@@ -210,7 +210,6 @@ class QueryParamValidator(AbstractContextManager):
                 cast = cast or (lambda x: x)
                 value = cast(self.query_params[param])
                 self.result[param] = value
-            # Missing a required parameter
             except KeyError:
                 raise exceptions.InvalidQueryParamException(
                     {"error": f"Missing required parameter `{param}`."},
@@ -242,13 +241,13 @@ class QueryParamValidator(AbstractContextManager):
 
     def __enter__(self) -> "utils.FrozenBox":
         """
-        Runs validation on provided request. See __exit__() for additional info.
+        Runs validation on the provided request. See __exit__() for additional info.
 
         :return: box of validated values.
         """
         # This context manager will unwind stack in case of an error.
         # The __exit__() method will be called with values of the exception raised inside _validate().
-        # This allows us handle exceptions both inside _validate() and inside of the context.
+        # This allows us to handle exceptions both inside _validate() and inside of the context.
         with self._cleanup_on_error():
             self._validate()
         return utils.FrozenBox(self.result)
@@ -263,7 +262,6 @@ class QueryParamValidator(AbstractContextManager):
         :param exc_tb: exception traceback
         :return: None
         """
-        # Report unexpected exceptions
         if exc_type not in (exceptions.InvalidQueryParamException, None):
             body = getattr(self.request, "body", {})
             text = (
@@ -314,11 +312,11 @@ def validate(
 
     :param request: request instance
     :param validators: dictionary of predefined validators
-    :param box_all: include all params that no specified in factories in the param box
+    :param box_all: include all params in the output dictionary, even if they're not specified in `factories`
     :param factories: factories that create python object from string parameters
     :return: QueryParamValidator instance
     """
-    # Wrap dictionary with request-like object
+    # Convert the request so it will matches the required request interface if needed
     request = utils.make_request(request)
     return QueryParamValidator(request, factories, validators, box_all)
 
@@ -331,16 +329,16 @@ def qval(
 ):
     """
     A decorator that validates query parameters.
-    The wrapped function must accept a request as the first parameter
+    The wrapped function must accept a request as the first argument
     (or second if it's a method) and `params` as last.
 
     :param factories: mapping (parameter, callable [str -> Any])
     :param validators: mapping (parameter, validator)
-    :param box_all: include all params that no specified in fields in the param box
-    :param request_: optional request object that can be provided to validator
+    :param box_all: include all params in the output dictionary, even if they're not specified in `factories`
+    :param request_: optional request object will be always provided to the validator
     :return: wrapped function
     """
-    # Check if decorator is used improperly, i.e without `factories`
+    # Check if the decorator is used improperly, i.e without `factories`
     if callable(factories):
         raise TypeError("qval() missing 1 required positional argument: 'factories'")
 
@@ -352,9 +350,7 @@ def qval(
             if request_ is not None:
                 request = utils.make_request(request_)
                 args.insert(0, request)
-            # Otherwise check the arguments
             elif isinstance(args[0], fwk.RequestType):
-                # And construct a request from the dict
                 request = args[0] = utils.make_request(args[0])
             elif len(args) > 1 and isinstance(args[1], fwk.RequestType):
                 request = args[1] = utils.make_request(args[1])
@@ -373,7 +369,7 @@ def qval(
 def qval_curry(request: fwk.Request):
     """
     Curries :func:`qval() <qval.qval.qval>` decorator and provides given :code:`request` object on each call.
-    This is handy especially in Flask, where request object is global.
+    This is especially handy in Flask, where `request` is global.
 
     Example:
     .. code-block:: python
