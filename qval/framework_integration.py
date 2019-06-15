@@ -69,7 +69,6 @@ def load_symbol(path: Union[object, str]):  # pragma: no cover
     return getattr(import_module(_mod), _symbol)
 
 
-# Check if DRF is installed
 try:
     from rest_framework.request import Request as _Request
     from rest_framework.exceptions import APIException
@@ -109,7 +108,6 @@ except ImportError:  # pragma: no cover
         RequestType += (Request,)
 
 
-# Check if Django is installed
 try:  # pragma: no cover
     from django.http import HttpRequest, JsonResponse
 
@@ -132,7 +130,7 @@ try:  # pragma: no cover
 
     def setup_django_middleware(module: "Module" = None):
         """
-        Setups exception hanlding middleware.
+        Setups the exception hanlding middleware.
 
         :param module: settings module
         :return: None
@@ -152,7 +150,7 @@ try:  # pragma: no cover
                 "to the MIDDLEWARE list."
             )
 
-    # Setup middleware if DRF is not installed
+    # Setup the middleware if DRF is not installed
     if (
         hasattr(module, "INSTALLED_APPS")
         and "rest_framework" not in module.INSTALLED_APPS
@@ -163,7 +161,6 @@ except ImportError:  # pragma: no cover
     pass
 
 
-# Check if flask is installed
 try:
     from flask import Request
 
@@ -172,7 +169,6 @@ except ImportError:  # pragma: no cover
     pass
 
 
-# Check if falcon is installed
 try:
     from falcon import Request
 
@@ -181,21 +177,20 @@ except ImportError:  # pragma: no cover
     pass
 
 
-# Check if custom wrapper is provided
 if hasattr(module, "QVAL_MAKE_REQUEST_WRAPPER"):
     _make_request = load_symbol(module.QVAL_MAKE_REQUEST_WRAPPER)
 else:
 
     def _make_request(f):
         """
-        Wraps default `utils.make_request()` function. Does nothing.
+        Wraps the default `utils.make_request()` function. Does nothing.
         """
         return f
 
 
 def setup_flask_error_handlers(app: "flask.Flask"):  # pragma: no cover
     """
-    Setups error handler for APIException.
+    Setups the error handler for `APIException`.
 
     :param app: flask app
     :return: None
@@ -217,7 +212,7 @@ def setup_flask_error_handlers(app: "flask.Flask"):  # pragma: no cover
 
 def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
     """
-    Setups error handler for APIException.
+    Setups the error handler for `APIException`.
 
     :param api: falcon.API
     :return:

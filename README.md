@@ -22,7 +22,7 @@ $ pip install qval
 ```
 
 ## Basic usage
-You can use Qval both as a function and as a decorator. Function `validate()` accepts 3 positional arguments and 1 named:
+You can use Qval both as a function and as a decorator. The function `validate()` accepts 3 positional arguments and 1 named:
 ```python
 # qval.py
 def validate(

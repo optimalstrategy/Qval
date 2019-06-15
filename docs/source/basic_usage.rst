@@ -3,7 +3,7 @@
 ===========
 Basic usage
 ===========
-Qval provides two ways of validation:
+Qval provides two ways to validate query parameters:
 
 1. A function called :func:`validate() <qval.qval.validate>`:
 
