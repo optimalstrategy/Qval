@@ -8,13 +8,14 @@ from . import framework_integration as fwk
 @fwk._make_request
 def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType:
     """
-    Creates DummyRequest if :code:`request` is a dictionary, and returns the :code:`request` itself otherwise.
+    Creates :class:`qval.framework_integration.DummyRequest`
+    if :code:`request` is a dictionary, and returns the :code:`request` itself otherwise.
 
     Behavior of this function can be customized with the
     :func:`@_make_request() <qval.framework_integration._make_request>` decorator.
-    Provide path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in the settings file
-    or set it as an environment variable. The wrapper function must accept :code:`request` as parameter and
-    return object that implements request interface.
+    Provide the path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in the settings file
+    or set it as an environment variable. The wrapper function must accept :code:`request` as a parameter and
+    return an object that implements the request interface.
 
     For example, the following code adds print to each function call:
     ::
@@ -40,7 +41,7 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
 
 def get_request_params(request: fwk.RequestType):
     """
-    Returns dictionary of query parameters of the given request.
+    Returns a dictionary of query parameters of the given request.
 
     :param request: any supported request
     :return: dictionary of parameters
@@ -102,7 +103,7 @@ class FrozenBox(object):
 
     def __getattr__(self, item: str) -> Any:
         """
-        Returns value of the stored `item` or attribute of the object.
+        Returns the value of the stored `item` or attribute of the object.
 
         :param item: item key
         :return: value
@@ -119,14 +120,15 @@ class FrozenBox(object):
 
     def __contains__(self, item: str) -> bool:
         """
-        Determines if item is inside of the dictionary.
+        Determines if the item is stored in the dictionary.
+
         :param item: item to check
         """
         return item in self.__dict__["__dct__"]
 
     def __iter__(self):
         """
-        Returns iterator over :code:`__dct__.items()`
+        Returns an iterator over :code:`__dct__.items()`
 
         :return: :code:`iter(__dct__.items())`
         """
@@ -134,19 +136,20 @@ class FrozenBox(object):
 
     def __repr__(self) -> str:
         """
-        Returns evaluable representation of the :class:`FrozenBox` object.
+        Returns an evaluable representation of the :class:`FrozenBox` object.
         """
         return f"FrozenBox({self.__dict__['__dct__']})"
 
     def __str__(self) -> str:
         """
-        Returns string representation of the :class:`FrozenBox` object.
+        Returns a string representation of the :class:`FrozenBox` object.
 
         :return: str(box)
         """
         return f"FrozenBox<{self.__dict__['__dct__']}>"
 
 
+# XXX: Think about removing this
 class ExcLogger(object):
     """
     A class used to report critical errors.
@@ -164,7 +167,7 @@ class ExcLogger(object):
 
     def __init__(self, logger_factories: List[Callable[[str], Any]]):
         """
-        Instantiates the ExcLogger.
+        Instantiates the logger.
 
         :param logger_factories: list of logger factories
         """
@@ -196,7 +199,7 @@ class ExcLogger(object):
 
     def add_logger(self, log_factory: Callable[[str], Any]):
         """
-        Adds new logger factory to list.
+        Adds new logger factory to the list.
 
         :param log_factory: logger
         :return: None
@@ -206,6 +209,7 @@ class ExcLogger(object):
     def clear(self):
         """
         Removes all saved factories.
+
         :return: None
         """
         self.factories.clear()
@@ -213,10 +217,10 @@ class ExcLogger(object):
     def dump(self, name: str, level: str, *args, **kwargs):
         """
         Instantiates new loggers using configured factories and provides
-        :code:`*args` and :code:`**kwargs` to built objects.
+        :code:`*args` and :code:`**kwargs` to the built objects.
 
         :param name: logger name
-        :param level: logging level. If built object has no attribute :code:`level`, it will be treated as callable.
+        :param level: logging level. If a built object has no attribute :code:`level`, it will be treated as callable.
         :param args: logger args
         :param kwargs: logger kwargs
         :return: None
@@ -250,7 +254,7 @@ class ExcLogger(object):
     @staticmethod
     def collect_loggers() -> list:
         """
-        Looks for configuration and returns list of detected loggers or :func:`logging.getLogger`.
+        Looks for configuration and returns a list of detected loggers or :func:`logging.getLogger`.
 
         :return: list of collected loggers
         """
@@ -267,7 +271,7 @@ class ExcLogger(object):
     @classmethod
     def detect_loggers(cls, silent: bool = False) -> "ExcLogger":
         """
-        Looks for configuration and instantiates ExcLogger with detected loggers
+        Looks for configuration and instantiates ExcLogger with the detected loggers
         or default :func:`logging.getLogger`.
 
         :param silent: omit logging test message

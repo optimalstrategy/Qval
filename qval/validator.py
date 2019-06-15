@@ -5,8 +5,8 @@ Predicate = Callable[[Any], bool]
 
 class QvalValidationError(Exception):
     """
-    An error raised on if validation fails.
-    This exception should be used to provide custom validation error message to the frontend.
+    An error raised if validation fails.
+    This exception should be used to provide a custom validation error message to the client.
 
     Example:
         >>> from qval import validate
@@ -25,12 +25,12 @@ class QvalValidationError(Exception):
 
 class Validator(object):
     """
-    Validates given value using provided predicates.
+    Validates the given value using provided predicates.
 
     .. automethod:: __call__
     """
 
-    # :class:`Validator` implements __call__(Any) -> bool,
+    # :class:`Validator` implements __call__(Any) -> bool, and
     # therefore can be treated in the same way as :type:`ValidatorType`.
     # For the sake of clarity, it is reflected in the class attributes below.
     ValidatorType = Union["Validator", Predicate]
@@ -47,7 +47,7 @@ class Validator(object):
 
     def add(self, predicate: Predicate) -> "Validator":
         """
-        Adds new predicate to the list.
+        Adds the predicate to the list.
 
         :param predicate: predicate function
         :return: self
