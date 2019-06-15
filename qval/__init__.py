@@ -1,21 +1,21 @@
 """
-This module provides convenient API for verifying query parameters.
+This module provides a convenient API for verifying query parameters.
 
 The core class is called `QueryParamValidator`. It accepts 4 arguments:
 
-- request: Request instance (Any object that has following attributes: GET, query_params and body)
+- request: Request instance (Any object that has the following attributes: GET, query_params and body)
 
-- factories: Dictionary of factories {param -> factory}. The value of the parameter will be provided
-  to factory before validation. Any callable that accepts string and returns anything is a valid factory.
+- factories: A dictionary of factories `{param -> factory}`. The value of the parameter will be provided
+  to the factory before validation. Any callable that accepts a string and returns anything is a valid factory.
 
-- validators: Dictionary if validators {param -> Validator}. Validator is basically a list of predicates
-  with the __call__() operator. See `Validator` class for more info.
+- validators: AD dictionary of validators `{param -> Validator}`. Validator is basically a list of predicates
+  with the __call__() operator. See the `Validator` class for more info.
 
-- box_all: If true, adds all request parameter to the final result.
-  Otherwise, only specified in `factories` parameters will be added.
+- box_all: If true, adds all request parameters to the output collection.
+  Otherwise, only parameters specified in `factories` will be added.
 
 If any parameter fails validation, `InvalidQueryParamException` (HTTP code = 400) will be raised.
-Also, only `TypeError`, `ValueError` and `KeyError` occurred when param is provided to factory
+Also, only `TypeError`, `ValueError` and `KeyError` occurred after an argument was provided to the factory
 result in the same exception.
 Any error thrown inside or outside of the context will raise an APIError (HTTP code = 500).
 
@@ -28,7 +28,7 @@ Example:
 
 The code above is too verbose. That's why you should use `validate()` -
 this function does all the boilerplate work for you:
-- `validate()` automatically converts dictionary to Request-like objects
+- `validate()` automatically converts dictionaries to Request-like objects
 - Key-value arguments are used to provide factories
 - It's easier to type
 
@@ -46,7 +46,7 @@ A little bit more complex example, with a custom factory:
     2.79, 0.5
 
 
-You can also use `qval()` decorator:
+You can also use the `qval()` decorator:
     >>> factories = {"num": int, "special": float}
     >>> validators = {"special": Validator(lambda x: x > 0)}
     >>> @qval(factories, validators)
@@ -94,4 +94,4 @@ from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator, QvalValidationError
 
 
-__version__ = "0.3.1"
+__version__ = "0.3.3"
