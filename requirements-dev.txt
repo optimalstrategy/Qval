@@ -10,7 +10,7 @@ Click==7.0
 codecov==2.0.15
 coverage==4.5.3
 Django==2.2.3
-djangorestframework==3.9.4
+djangorestframework==3.10.0
 docutils==0.14
 falcon==2.0.0
 filelock==3.0.12
