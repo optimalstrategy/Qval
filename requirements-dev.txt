@@ -9,7 +9,7 @@ chardet==3.0.4
 Click==7.0
 codecov==2.0.15
 coverage==4.5.4
-Django==2.2.3
+Django==2.2.4
 djangorestframework==3.10.2
 docutils==0.14
 falcon==2.0.0
