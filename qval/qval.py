@@ -35,9 +35,9 @@ class QueryParamValidator(AbstractContextManager):
         Instantiates the query validator.
 
         :param request: fwk.Request instance
-        :param factories: mapping of :code:`{param -> factory}`. Providing :code:`None` as a factory is equivalent to :code:`str`
-                       or :code:`lambda x: x`, since params are stored as strings.
-        :param validators: dictionary of pre-defined validators
+        :param factories: a mapping of :code:`{param -> factory}`. Providing :code:`None` as a factory is equivalent to :code:`str`
+                       or :code:`lambda x: x`, since parameters are stored as strings.
+        :param validators: a dictionary of pre-defined validators
         :param box_all: include all params, even if they're not specified in :code:`factories`
         """
         self.request = request
@@ -47,7 +47,7 @@ class QueryParamValidator(AbstractContextManager):
 
         self.result: Dict[str, Any] = {
             k: self.query_params[k]
-            # Add all parameters to the resulting dictionary if box_all is true.
+            # Add all parameters to the resulting dictionary if `box_all` is true.
             # Otherwise keep only the specified parameters.
             for k in (self.query_params if self._box_all else self._factories)
         }
@@ -203,10 +203,8 @@ class QueryParamValidator(AbstractContextManager):
 
         :return: None
         """
-        # Firstly, cast the parameters to required types
         for param, cast in self._factories.items():
             try:
-                # If cast is None, just leave the parameter a string
                 cast = cast or (lambda x: x)
                 value = cast(self.query_params[param])
                 self.result[param] = value
@@ -215,7 +213,6 @@ class QueryParamValidator(AbstractContextManager):
                     {"error": f"Missing required parameter `{param}`."},
                     status=fwk.HTTP_400_BAD_REQUEST,
                 )
-            # Invalid cast
             except (ValueError, TypeError):
                 expected = "."
                 # Expose only built-in types
@@ -226,7 +223,6 @@ class QueryParamValidator(AbstractContextManager):
                     status=fwk.HTTP_400_BAD_REQUEST,
                 )
 
-        # Run validations on each parameter
         for param, value in self.result.items():
             validator = self._params[param]
             try:
@@ -245,9 +241,9 @@ class QueryParamValidator(AbstractContextManager):
 
         :return: box of validated values.
         """
-        # This context manager will unwind stack in case of an error.
-        # The __exit__() method will be called with values of the exception raised inside _validate().
-        # This allows us to handle exceptions both inside _validate() and inside of the context.
+        # This context manager will unwind the stack in case of an error.
+        # The __exit__() method will be called with the values of the exception raised inside _validate().
+        # This allows us to handle exceptions both inside _validate() and inside the context.
         with self._cleanup_on_error():
             self._validate()
         return utils.FrozenBox(self.result)
@@ -255,7 +251,7 @@ class QueryParamValidator(AbstractContextManager):
     def __exit__(self, exc_type, exc_val, exc_tb):
         """
         If occurred exception is not an :class:`InvalidQueryParamException <qval.exceptions.InvalidQueryParamException>`,
-        the exception will be re-raised as an APIException, which will result in 500 error on the client side.
+        the exception will be re-raised as an APIException, which will result in the 500 error on the client side.
 
         :param exc_type: exception type
         :param exc_val: exception instance
@@ -265,13 +261,12 @@ class QueryParamValidator(AbstractContextManager):
         if exc_type not in (exceptions.InvalidQueryParamException, None):
             body = getattr(self.request, "body", {})
             text = (
-                f"An error occurred during the validation or inside of the context: exc `{exc_type}` ({exc_val}).\n"
+                f"An error has occurred during the validation or inside of the context: exc `{exc_type}` ({exc_val}).\n"
                 f"| Parameters: {self.query_params}\n"
                 f"| Body      : {body}\n"
                 f"| Exception:\n"
             )
             utils.log.error(
-                __name__,
                 text,
                 extra={
                     "stack": True,
@@ -282,7 +277,7 @@ class QueryParamValidator(AbstractContextManager):
                 exc_info=(exc_type, exc_val, exc_tb),
             )
             raise exceptions.APIException(
-                detail="An error occurred while processing you request. "
+                detail="An error has occurred while processing you request. "
                 "Please contact the website administrator."
             ) from exc_val
 
@@ -291,7 +286,7 @@ def validate(
     request: Union[fwk.Request, Dict[str, str]],
     validators: Dict[str, Validator.ValidatorType] = None,
     box_all: bool = True,
-    **factories,
+    **factories: Optional[Callable[[str], Any]],
 ) -> QueryParamValidator:
     """
     Shortcut for QueryParamValidator.
@@ -310,13 +305,12 @@ def validate(
         ...     print(p.price, p.n_items)
         43.5 1
 
-    :param request: request instance
-    :param validators: dictionary of predefined validators
-    :param box_all: include all params in the output dictionary, even if they're not specified in `factories`
-    :param factories: factories that create python object from string parameters
+    :param request: a request object
+    :param validators: a dictionary of validators
+    :param box_all: include all parameters in the output dictionary, even if they're not specified in `factories`
+    :param factories: a dictionary of callables that create a python object from their parameter
     :return: QueryParamValidator instance
     """
-    # Convert the request so it will matches the required request interface if needed
     request = utils.make_request(request)
     return QueryParamValidator(request, factories, validators, box_all)
 
@@ -330,15 +324,15 @@ def qval(
     """
     A decorator that validates query parameters.
     The wrapped function must accept a request as the first argument
-    (or second if it's a method) and `params` as last.
+    (or second if it's a method), and `params` as last.
 
-    :param factories: mapping (parameter, callable [str -> Any])
-    :param validators: mapping (parameter, validator)
-    :param box_all: include all params in the output dictionary, even if they're not specified in `factories`
-    :param request_: optional request object will be always provided to the validator
+    :param factories: a mapping (parameter, callable [str -> Any])
+    :param validators: a mapping (parameter, validator)
+    :param box_all: include all parameters in the output dictionary, even if they're not specified in `factories`
+    :param request_: optional request object that will always be provided to the validator
     :return: wrapped function
     """
-    # Check if the decorator is used improperly, i.e without `factories`
+    # Check if the decorator is used improperly
     if callable(factories):
         raise TypeError("qval() missing 1 required positional argument: 'factories'")
 
@@ -355,9 +349,7 @@ def qval(
             elif len(args) > 1 and isinstance(args[1], fwk.RequestType):
                 request = args[1] = utils.make_request(args[1])
             else:
-                raise ValueError(
-                    "The first argument of the view must be a request-like."
-                )
+                raise ValueError("The first argument of the view must be request-like.")
             with validate(request, validators, box_all, **factories) as params:
                 return f(*args, params, **kwargs)
 
@@ -368,8 +360,8 @@ def qval(
 
 def qval_curry(request: fwk.Request):
     """
-    Curries :func:`qval() <qval.qval.qval>` decorator and provides given :code:`request` object on each call.
-    This is especially handy in Flask, where `request` is global.
+    Curries :func:`qval() <qval.qval.qval>` decorator and provides the given :code:`request`
+    object to the curried function on each call. This is especially handy in Flask, where `request` is global.
 
     Example:
     .. code-block:: python

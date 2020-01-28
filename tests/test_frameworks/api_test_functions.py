@@ -48,7 +48,7 @@ def test_pow_overflow_error(server):
     assert r.status_code == 500
     assert (
         r.json()["error"]
-        == "An error occurred while processing you request. Please contact the website administrator."
+        == "An error has occurred while processing you request. Please contact the website administrator."
     )
 
 

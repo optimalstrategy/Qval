@@ -8,16 +8,16 @@ from . import framework_integration as fwk
 @fwk._make_request
 def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType:
     """
-    Creates :class:`qval.framework_integration.DummyRequest`
+    Creates a :class:`qval.framework_integration.DummyRequest`
     if :code:`request` is a dictionary, and returns the :code:`request` itself otherwise.
 
-    Behavior of this function can be customized with the
+    The behavior of this function can be customized with the
     :func:`@_make_request() <qval.framework_integration._make_request>` decorator.
     Provide the path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in the settings file
-    or set it as an environment variable. The wrapper function must accept :code:`request` as a parameter and
+    or set it as an environment variable. The wrapper function must accept :code:`request` as the parameter and
     return an object that implements the request interface.
 
-    For example, the following code adds print to each function call:
+    For example, the following code adds `print` to each call of the function:
     ::
 
         # app/utils.py
@@ -41,7 +41,7 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
 
 def get_request_params(request: fwk.RequestType):
     """
-    Returns a dictionary of query parameters of the given request.
+    Returns a dictionary of the query parameters of the given request.
 
     :param request: any supported request
     :return: dictionary of parameters
@@ -51,14 +51,14 @@ def get_request_params(request: fwk.RequestType):
         if hasattr(request, attr):
             return getattr(request, attr)
     raise AttributeError(
-        "Provided request object has no any of the following attributes: "
+        "Provided request object does not have any of the following attributes: "
         "{}.".format(", ".join(f"`{attr}`" for attr in supported_attrs))
     )
 
 
-def dummyfy(request: fwk.Request) -> fwk.DummyRequest:
+def dummify(request: fwk.Request) -> fwk.DummyRequest:
     """
-    Constructs :class:`qval.framework_integration.DummyRequest` with params of the given request.
+    Constructs a :class:`qval.framework_integration.DummyRequest` with the parameters of the given request.
 
     :param request: any supported request
     :return: :code:`DummyRequest(request.<params>)`
@@ -68,7 +68,7 @@ def dummyfy(request: fwk.Request) -> fwk.DummyRequest:
 
 class FrozenBox(object):
     """
-    Frozen dictionary that allows accessing elements by :code:`.`
+    A frozen dictionary that allows accessing the elements with :code:`.`
 
     Example:
         >>> box = FrozenBox({"num": 10, "s": "string"})
@@ -88,7 +88,7 @@ class FrozenBox(object):
 
     def __init__(self, dct: Dict[Any, Any]):
         """
-        :param dct: dict to store
+        :param dct: the dict to store
         """
         self.__dict__["__dct__"] = dct
 
@@ -96,8 +96,8 @@ class FrozenBox(object):
         """
         [] operator.
 
-        :param item: item key
-        :return: value for key `item`
+        :param item:
+        :return: value for the key `item`
         """
         return self.__dict__["__dct__"][item]
 
@@ -149,29 +149,27 @@ class FrozenBox(object):
         return f"FrozenBox<{self.__dict__['__dct__']}>"
 
 
-# XXX: Think about removing this
 class ExcLogger(object):
     """
     A class used to report critical errors.
 
     >>> from qval.utils import log
     >>> log
-    ExcLogger([getLogger])
+    ExcLogger()
     >>> log.is_enabled
     True
     >>> log.disable()
     >>> print(log)
-    ExcLogger<[getLogger], enabled = false>
-
+    ExcLogger<<Logger qval (WARNING)>>, enabled = false>
     """
 
-    def __init__(self, logger_factories: List[Callable[[str], Any]]):
+    def __init__(self):
         """
         Instantiates the logger.
 
-        :param logger_factories: list of logger factories
+        :param logger: a list of loggers
         """
-        self.factories = logger_factories
+        self.logger = logging.getLogger("qval")
         self._enabled = True
 
     @property
@@ -197,30 +195,10 @@ class ExcLogger(object):
         """
         self._enabled = True
 
-    def add_logger(self, log_factory: Callable[[str], Any]):
+    def log(self, level: str, *args, **kwargs):
         """
-        Adds new logger factory to the list.
+        Logs a new error message on the given level if logging is enabled.
 
-        :param log_factory: logger
-        :return: None
-        """
-        self.factories.append(log_factory)
-
-    def clear(self):
-        """
-        Removes all saved factories.
-
-        :return: None
-        """
-        self.factories.clear()
-
-    def dump(self, name: str, level: str, *args, **kwargs):
-        """
-        Instantiates new loggers using configured factories and provides
-        :code:`*args` and :code:`**kwargs` to the built objects.
-
-        :param name: logger name
-        :param level: logging level. If a built object has no attribute :code:`level`, it will be treated as callable.
         :param args: logger args
         :param kwargs: logger kwargs
         :return: None
@@ -228,68 +206,32 @@ class ExcLogger(object):
         if not self._enabled:
             return
 
-        for build in self.factories:
-            try:
-                logger = build(name)
-                if hasattr(logger, level):
-                    getattr(logger, level)(*args, **kwargs)
-                else:
-                    logger(*args, **kwargs)
-            except TypeError:
-                raise
-            except:  # lgtm [py/catch-base-exception]
-                pass
+        try:
+            self.logger.log(level, *args, **kwargs)
+        except Exception as e:
+            self.logger.error(
+                "Caught an error while logging with the parameters ({}, {}, {}):\n{}".format(
+                    repr(level), args, kwargs, e
+                )
+            )
 
-    def error(self, name: str, *args, **kwargs):
+    def error(self, *args, **kwargs):
         """
-        Shortcut for :meth:`dump(name, "error", ...) <qval.utils.ExcLogger.dump>`.
+        Shortcut for :meth:`log("error", ...) <qval.utils.ExcLogger.log>`.
 
-        :param name: logger name
-        :param args: logger args
-        :param kwargs: logger kwargs
+        :param args: log args
+        :param kwargs: log kwargs
         :return: None
         """
-        self.dump(name, "error", *args, **kwargs)
-
-    @staticmethod
-    def collect_loggers() -> list:
-        """
-        Looks for configuration and returns a list of detected loggers or :func:`logging.getLogger`.
-
-        :return: list of collected loggers
-        """
-        module = fwk.get_module()
-        if hasattr(module, "QVAL_LOGGERS"):
-            _loggers = module.QVAL_LOGGERS
-            if not isinstance(_loggers, (tuple, list)):
-                _loggers = [_loggers]
-            loggers = [load_symbol(log) for log in _loggers]
-        else:
-            loggers = [logging.getLogger]
-        return loggers
-
-    @classmethod
-    def detect_loggers(cls, silent: bool = False) -> "ExcLogger":
-        """
-        Looks for configuration and instantiates ExcLogger with the detected loggers
-        or default :func:`logging.getLogger`.
-
-        :param silent: omit logging test message
-        :return: ExcLogger object
-        """
-        logger = cls(cls.collect_loggers())
-        if not silent:
-            logger.dump(__file__, "info", "test message")
-        return logger
+        self.log("error", *args, **kwargs)
 
     def __repr__(self) -> str:
-        return f"ExcLogger([{', '.join(map(lambda x: x.__name__, self.factories))}])"
+        return "ExcLogger()"
 
     def __str__(self) -> str:
         return (
-            f"ExcLogger<[{', '.join(map(lambda x: x.__name__, self.factories))}], "
-            f"enabled = {str(self.is_enabled).lower()}>"
+            f"ExcLogger<{self.logger}>, " f"enabled = {str(self.is_enabled).lower()}>"
         )
 
 
-log = ExcLogger.detect_loggers()
+log = ExcLogger()

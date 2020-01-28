@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 # Flask uses one global request object.
 # You can automatically provide it to the `@qval()` decorator on each call
-# by executing `qval_curry(request)`.
+# by re-assigning `qval` with `qval_curry(request)`.
 qval = qval_curry(request)
 
-# Setup exception handlers
+# Setup the exception handlers
 setup_flask_error_handlers(app)
 
 
@@ -24,10 +24,10 @@ def division_view():
     Example: GET /api/divide?a=10&b=2&token=abcdefghijkl -> 200, {"answer": 5}
     """
     # Parameter validation occurs in the context manager.
-    # If validation fails or user code throws an error, context manager
+    # If validation fails or user code throws an error, the context manager
     # will raise InvalidQueryParamException or APIException respectively.
     # In Django, these exception will be processed and result
-    # in error codes (400 and 500) on the client side.
+    # in the error codes 400 and 500 on the client side.
     params = (
         validate(request, a=int, b=int)
         # `b` must be anything but zero
@@ -41,7 +41,7 @@ def division_view():
 @qval({"a": float, "b": float})
 def exponentiation_view(request, params):
     """
-    Note that request parameter is now being provided to the view.
+    Note that the `request` parameter is now being provided to the view.
 
     GET /api/pow?
     param a : float
@@ -54,14 +54,14 @@ def exponentiation_view(request, params):
     }
    """
     # Here we don't catch the OverflowError if `b` is too big.
-    # This will result in 500 error on the client side.
+    # This will result in the 500 error on the client side.
     return jsonify({"answer": params.a ** params.b})
 
 
 def price_validator(price: int) -> bool:
     """
-    A predicate to validate `price` query parameter.
-    Provides custom error message.
+    A predicate to validate the `price` query parameter.
+    Provides a custom error message.
     """
     if price <= 0:
         # If price does not match our requirements, we raise QvalValidationError() with a custom message.

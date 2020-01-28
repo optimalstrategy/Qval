@@ -1,8 +1,7 @@
 import os
-from io import StringIO
 import pytest
 
-from qval.utils import get_request_params, log, load_symbol
+from qval.utils import get_request_params, load_symbol
 from tests.crossframework import builder
 
 symbol = lambda x, y: x + y
@@ -36,57 +35,3 @@ def envvar():
     os.environ["DJANGO_SETTINGS_MODULE"] = "tests.test_utils"
     yield None
     del os.environ["DJANGO_SETTINGS_MODULE"]
-
-
-def test_log_detect_loggers(envvar):
-    logger = log.detect_loggers(silent=True)
-
-    assert len(logger.factories) == 1
-    assert callable(logger.factories[0])
-
-    msg = logger.factories[0]("test")("message")
-    assert msg == f"[test]: message"
-
-
-def test_log_add_loggers():
-    buf = StringIO()
-    logger = log.detect_loggers()
-
-    logger.add_logger(lambda name: lambda v: buf.write(f"[{name}]: {v}\n"))
-    logger.dump("test", "info", "message")
-
-    assert buf.getvalue() == "[test]: message\n"
-
-
-def test_logging_switch():
-    buf = StringIO()
-    logger = log.detect_loggers()
-    assert logger.is_enabled
-    logger.enable()
-
-    logger.add_logger(lambda name: lambda v: buf.write(f"[{name}]: {v}\n"))
-    logger.dump("test", "info", "message")
-    assert logger.is_enabled
-    assert buf.getvalue() == "[test]: message\n"
-
-    logger.disable()
-    logger.dump("test", "info", "message")
-    assert not logger.is_enabled
-    assert buf.getvalue() == "[test]: message\n"
-
-
-def test_log_errors_handling():
-    logger = log.detect_loggers()
-
-    logger.clear()
-    logger.add_logger(lambda _: object())
-
-    with pytest.raises(TypeError) as e:
-        logger.dump(__file__, "message")
-    assert e.type is TypeError
-    logger.clear()
-
-    # int("string") raises ValueError.
-    # Any errors except the TypeError should be ignored.
-    logger.add_logger(lambda _: lambda *__: int("string"))
-    logger.dump(__file__, "message")

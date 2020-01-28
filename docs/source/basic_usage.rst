@@ -9,17 +9,17 @@ Qval provides two ways to validate query parameters:
 
     .. code-block:: python
 
+        # qval.py
         def validate(
-            # Request instance. Must be a dictionary or implement request interface.
+            # Request instance. Must implement the request interface or be a dictionary.
             request: Union[Request, Dict[str, str]],
-            # Dictionary of (param_name -> `Validator()` object).
+            # A Dictionary in the form of (param_name -> `Validator()` object).
             validators: Dict[str, Validator] = None,
-            # Provide true if you want to access all parameters of the request in the context.
+            # Provide true if you want to access any other parameters besides the configured ones  inside the validation context.
             box_all: bool = True,
-            # Factories that will be used to convert parameters to python objects (param -> [callable[str] => object]).
-            **factories,
+            # The factories that will be used to convert the parameters to python objects..
+            **factories: Optional[Callable[[str], object]],
         ) -> QueryParamValidator:
-
 
 2. A decorator called :func:`@qval() <qval.qval.qval>`:
 
@@ -39,14 +39,13 @@ Qval provides two ways to validate query parameters:
 
 
 Let's jump to a quick example.
-Imagine you have a RESTful calculator with an endpoint called :code:`/api/divide`. You can use :func:`validate() <qval.qval.validate>`
-to automatically convert query parameters to python objects and then validate them:
+Imagine that you have a RESTful calculator with an endpoint called :code:`/api/divide`. You can use :func:`validate() <qval.qval.validate>`
+to automatically convert the parameters to python objects and then validate them:
 
     .. code-block:: python
 
         from qval import validate
         ...
-
         def division_view(request):
             """
             GET /api/divide?
@@ -57,18 +56,18 @@ to automatically convert query parameters to python objects and then validate th
             Example: GET /api/divide?a=10&b=2&token=abcdefghijkl -> 200, {"answer": 5}
             """
             # Parameter validation occurs in the context manager.
-            # If validation fails or user code throws an error, context manager
+            # If validation fails or user code throws an error, the context manager
             # will raise InvalidQueryParamException or APIException respectively.
             # In Django Rest Framework, these exceptions will be processed and result
-            # in error codes (400 and 500) on the client side.
+            # in the error codes 400 and 500 on the client side.
             params = (
-                # `a` and `b` must be integers
+                # `a` and `b` must be integers.
                 # Note: in order to get a nice error message on the client side,
                 # you factory should raise either ValueError or TypeError
                 validate(request, a=int, b=int)
                 # `b` must be anything but zero
                 .nonzero("b")
-                # The `transform` callable will be applied to parameter before the check.
+                # The `transform` callable will be applied to the parameter before the check.
                 # In this case we'll get `token`'s length and check if it is equal to 12.
                 .eq("token", 12, transform=len)
             )
@@ -99,9 +98,8 @@ If you have many parameters and custom validators, it's better to use the :func:
 
     .. code-block:: python
 
-        # validators.py
         from decimal import Decimal
-        from qval import Validator
+        from qval import Validator, QvalValidationError
         ...
 
         def price_validator(price: int) -> bool:
@@ -130,8 +128,8 @@ If you have many parameters and custom validators, it's better to use the :func:
         from validators import *
         ...
 
-        # Any function or method wrapped with `qval()` must accept request as
-        # either first or second argument, and parameters as last.
+        # Any function or method wrapped with `qval()` must accept `request` as
+        # either the first or the second argument, and the parameters as last.
         @qval(purchase_factories, purchase_validators)
         def purchase_view(request, params):
             """
@@ -142,6 +140,5 @@ If you have many parameters and custom validators, it's better to use the :func:
 
             Example: GET /api/purchase?item_id=1&price=5.8&token=abcdefghijkl
             """
-            # do something with p.item_id and p.price
             print(f"{params.item_id} costs {params.price}$.")
             ...
