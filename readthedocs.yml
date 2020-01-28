@@ -4,5 +4,5 @@ build:
 python:
   version: 3.6
 
-# runtime requirements are needed to properly generate type annotations
+# runtime requirements are needed to properly generate the type annotations
 requirements_file: requirements-dev.txt

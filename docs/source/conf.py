@@ -27,7 +27,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = "Qval"
-copyright = "2018, George"
+copyright = "2020, George"
 author = "George"
 
 # The short X.Y version
