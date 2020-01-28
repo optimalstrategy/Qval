@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from qval import InvalidQueryParamException, qval, qval_curry
 from qval.framework_integration import HTTP_400_BAD_REQUEST, Request
-from qval.utils import FrozenBox, dummyfy
+from qval.utils import FrozenBox, dummify
 from qval.validator import Validator
 
 from tests.crossframework import builder
@@ -22,7 +22,7 @@ validators = {"price": Validator(lambda x: x > 0)}
 
 @qval(factories, validators)
 def simple_view(request: Request, params: FrozenBox):
-    return dummyfy(request), params
+    return dummify(request), params
 
 
 class ViewClass(object):
@@ -30,7 +30,7 @@ class ViewClass(object):
     def complex_view(
         self, request: Request, param1: int, param2: int, params: FrozenBox
     ):
-        return dummyfy(request), param1, param2, params
+        return dummify(request), param1, param2, params
 
 
 def test_params_provided():
@@ -120,7 +120,7 @@ curried_qval = get_curried_qval()
 
 @curried_qval(factories, validators)
 def view(request, some_param, params):
-    return dummyfy(request), some_param, params
+    return dummify(request), some_param, params
 
 
 def test_curried_qval():

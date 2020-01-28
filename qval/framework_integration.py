@@ -6,7 +6,7 @@ from importlib import import_module
 
 class _EnvironSettings(object):  # pragma: no cover
     """
-    Lookups attribute calls in os.environ.
+    Lookups attribute accesses in `os.environ`.
     """
 
     def __getattr__(self, item):
@@ -19,7 +19,7 @@ class _EnvironSettings(object):  # pragma: no cover
 
 class DummyRequest(object):
     """
-    DummyRequest. Used for compatibility with supported frameworks.
+    DummyRequest. Used for compatibility with the supported frameworks.
     """
 
     def __init__(self, params: Dict[str, str]):
@@ -40,7 +40,7 @@ RequestType = (dict, Request)
 
 def get_module() -> Union[_EnvironSettings, "Module"]:  # pragma: no cover
     """
-    Attempts to load settings module.
+    Attempts to load the settings module.
     If none of the supported env variables are defined, returns :class:`_EnvironSettings()` object.
     """
     module = None
@@ -57,7 +57,7 @@ module = get_module()
 
 def load_symbol(path: Union[object, str]):  # pragma: no cover
     """
-    Imports object using the given path.
+    Imports an object using the given path.
 
     :param path: path to an object, e.g. my.module.func_1
     :return: loaded symbol
@@ -83,10 +83,10 @@ try:
 except ImportError:  # pragma: no cover
     REST_FRAMEWORK = False
 
-    # Define missing symbols
+    # Define the missing symbols
     class APIException(Exception):
         """
-        Base class for Qval's exceptions.
+        The base class for Qval's exceptions.
         Used if DRF is not installed.
         """
 
@@ -94,7 +94,7 @@ except ImportError:  # pragma: no cover
             """
             Instantiates the exception object.
 
-            :param detail: dict or string with details
+            :param detail: dict or string with the details
             """
             self.detail = detail
             self.status_code = HTTP_500_INTERNAL_SERVER_ERROR
@@ -130,7 +130,7 @@ try:  # pragma: no cover
 
     def setup_django_middleware(module: "Module" = None):
         """
-        Setups the exception hanlding middleware.
+        Setups the exception-handling middleware.
 
         :param module: settings module
         :return: None
@@ -144,8 +144,8 @@ try:  # pragma: no cover
             )
         else:
             logging.warning(
-                "Unable to add APIException middleware to the MIDDLEWARE list. "
-                "Django does not support APIException handling without DRF integration. "
+                "Unable to add the APIException middleware to the MIDDLEWARE list. "
+                "Django does not support APIException handling without the DRF integration. "
                 "Define DJANGO_SETTINGS_MODULE or add 'qval.framework_integration.HandleAPIExceptionDjango' "
                 "to the MIDDLEWARE list."
             )
@@ -217,7 +217,7 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
     :param api: falcon.API
     :return:
     """
-    # try to use faster json library
+    # try to use a faster json library
     try:
         import ujson as json
     except ImportError:
@@ -227,7 +227,7 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
 
     major_version = int(__version__.split(".", maxsplit=1)[0])
 
-    # Falcon 2.0.0 changed the order of arguments
+    # Falcon 2.0.0 changed the order of the arguments
     if major_version >= 2:
 
         def handle_api_exception(
@@ -259,6 +259,6 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
     api.add_error_handler(APIException, handler=handle_api_exception)
 
 
-# RequestType is a tuple that will be used in type checking
-# Request is a Union of request types and is used in annotations
+# RequestType is a tuple that will be used in type checking.
+# Request is a Union of the available request types and is used in annotations.
 Request = Union[RequestType]
