@@ -94,4 +94,4 @@ from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator, QvalValidationError
 
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"

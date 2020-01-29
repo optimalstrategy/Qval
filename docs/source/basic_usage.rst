@@ -15,9 +15,9 @@ Qval provides two ways to validate query parameters:
             request: Union[Request, Dict[str, str]],
             # A Dictionary in the form of (param_name -> `Validator()` object).
             validators: Dict[str, Validator] = None,
-            # Provide true if you want to access any other parameters besides the configured ones  inside the validation context.
+            # Provide true if you want to access any other parameters besides the configured ones inside the validation context.
             box_all: bool = True,
-            # The factories that will be used to convert the parameters to python objects..
+            # The factories that will be used to convert the parameters to python objects.
             **factories: Optional[Callable[[str], object]],
         ) -> QueryParamValidator:
 
@@ -27,13 +27,13 @@ Qval provides two ways to validate query parameters:
 
         # Wrapped view must accept `request` as either first or second argument
         def qval(
-            # Dictionary of (parameter -> factory or None)
+            # A Dictionary of (parameter -> factory or None)
             factories: Dict[str, Optional[Callable[[str], Any]]],
-            # Dictionary of (parameter -> Validator)
+            # A Dictionary of (parameter -> Validator)
             validators: Dict[str, Validator] = None,
             # Boxing flag. Provide True to access all provided parameters in the context manager
             box_all: bool = True,
-            # Optional request instance that will be used to obtain query parameters
+            # Optional request instance that will be used to obtain the query parameters
             request_: Request = None,
         ):
 
@@ -104,8 +104,8 @@ If you have many parameters and custom validators, it's better to use the :func:
 
         def price_validator(price: int) -> bool:
             """
-            A predicate to validate `price` query parameter.
-            Provides custom error message.
+            A predicate to validate the `price` query parameter.
+            Provides a custom error message.
             """
             if price <= 0:
                 # If price does not match our requirements, we raise QvalValidationError() with a custom message.
@@ -129,7 +129,7 @@ If you have many parameters and custom validators, it's better to use the :func:
         ...
 
         # Any function or method wrapped with `qval()` must accept `request` as
-        # either the first or the second argument, and the parameters as last.
+        # either first or second argument, and `params` as last.
         @qval(purchase_factories, purchase_validators)
         def purchase_view(request, params):
             """

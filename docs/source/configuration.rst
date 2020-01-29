@@ -7,7 +7,7 @@ Settings
 --------
 
 Qval supports configuration via config files and environmental variables.
-If :code:`DJANGO_SETTINGS_MODULE` or :code:`SETTINGS_MODULE` are defined, the specified config module will be used. Otherwise,
+If :code:`DJANGO_SETTINGS_MODULE` or :code:`SETTINGS_MODULE` is defined, the specified config module will be used. Otherwise,
 all lookups will be done in :obj:`os.environ`.
 
 Supported variables:
@@ -33,14 +33,14 @@ Supported variables:
     or to add it to the config file.
 
 * | :code:`QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. :func:`@qval() <qval.qval.qval>` will use it to
-    determine which argument is a request. If you have a custom request class that implements
+    determine which argument is the request. If you have a custom request class that implements
     :class:`DummyRequest() <qval.framework_integration.DummyRequest>` interface, provide it with this variable.
 
 -------
 Logging
 -------
 
-Qval uses a global :obj:`log <qval.utils.log>` object when reporting errors. Example error message:
+Qval uses the global :obj:`log <qval.utils.log>` object when reporting errors. Example error message:
 
 .. code-block:: bash
 
@@ -57,3 +57,4 @@ Qval uses a global :obj:`log <qval.utils.log>` object when reporting errors. Exa
     Internal Server Error: /api/pow
     [19/Nov/2018 07:03:15] "GET /api/pow?a=2.2324&b=30000000 HTTP/1.1" 500 102
 
+You can disable the logging entirely by calling :func:`log.disable() <qval.utils.ExcLogger.disable>`.
