@@ -7,7 +7,7 @@ jobs:
       steps:
         - checkout
         - run: mkdir test-reports
-        - run: pip install tox codecov && tox
+        - run: pip install tox codecov coverage==4.4 && tox
         - run: mv coverage.xml test-reports/coverage.xml
         - run: coverage report
         - run: codecov
