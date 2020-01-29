@@ -3,7 +3,7 @@
 [![Documentation Status](https://readthedocs.org/projects/qval/badge/?version=latest)](https://qval.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/OptimalStrategy/Qval/branch/master/graph/badge.svg)](https://codecov.io/gh/OptimalStrategy/Qval)
 [![PyPI version](https://badge.fury.io/py/qval.svg)](https://badge.fury.io/py/qval)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 * [Installation](#installation)
 * [Basic usage](#basic-usage)
@@ -17,8 +17,8 @@
     * [Logging](#logging)
 
 ## About
-Qval is a query parameters validation library designed to be used in small projects that require a lot of repetitive 
-parameter validation. In contrast with DRF's [Validators](https://www.django-rest-framework.org/api-guide/validators/) 
+Qval is a query parameters validation library designed to be used in small projects that require a lot of repetitive
+parameter validation. In contrast with DRF's [Validators](https://www.django-rest-framework.org/api-guide/validators/)
 (and other serialization abstractions), Qval requires almost no boilerplate.
 
 ## Installation
@@ -39,11 +39,11 @@ def validate(
     box_all: bool = True,
     # The factories that will be used to convert the parameters to python objects..
     **factories: Optional[Callable[[str], object]],
-) -> QueryParamValidator: 
+) -> QueryParamValidator:
 ```
 
 ### A Use Case
-Let's imagine that you have a RESTful calculator with an endpoint called `/api/divide`. You can use `validate()` 
+Let's imagine that you have a RESTful calculator with an endpoint called `/api/divide`. You can use `validate()`
 to automatically convert the parameters to python objects and then validate them:
 ```python
 from qval import validate
@@ -55,13 +55,13 @@ def division_view(request):
     param a     : int
     param b     : int, nonzero
     param token : string, length = 12
-       
+
     Example: GET /api/divide?a=10&b=2&token=abcdefghijkl -> 200, {"answer": 5}
     """
     # Parameter validation occurs in the context manager.
     # If validation fails or user code throws an error, the context manager
     # will raise InvalidQueryParamException or APIException respectively.
-    # In Django Rest Framework, these exceptions will be processed and result 
+    # In Django Rest Framework, these exceptions will be processed and result
     # in the error codes 400 and 500 on the client side.
     params = (
         # `a` and `b` must be integers.
@@ -126,8 +126,8 @@ from qval import qval
 from validators import *
 ...
 
-# Any function or method wrapped with `qval()` must accept `request` as 
-# either the first or the second argument, and the parameters as last.
+# Any function or method wrapped with `qval()` must accept `request` as
+# either first or second argument, and `params` as last.
 @qval(purchase_factories, purchase_validators)
 def purchase_view(request, params):
     """
@@ -145,11 +145,11 @@ def purchase_view(request, params):
 ## Framework-specific Instructions
 1. <a name="drf"></a> Django Rest Framework works straight out of the box. Simply add `@qval()` to your views or use `validate()` inside.
 
-2. <a name="plain-django"></a> For Django _without_ DRF you may need to add the exception handler to `settings.MIDDLEWARE`. Qval attempts to 
+2. <a name="plain-django"></a> For Django _without_ DRF you may need to add the exception handler to `settings.MIDDLEWARE`. Qval attempts to
 do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the following message:
     ```bash
-    WARNING:root:Unable to add the APIException middleware to the MIDDLEWARE list. Django does not 
-    support APIException handling without DRF integration. Define DJANGO_SETTINGS_MODULE or 
+    WARNING:root:Unable to add the APIException middleware to the MIDDLEWARE list. Django does not
+    support APIException handling without DRF integration. Define DJANGO_SETTINGS_MODULE or
     add 'qval.framework_integration.HandleAPIExceptionDjango' to the MIDDLEWARE list.
     ```
     Take a look at the plain Django example [here](examples/django-example).
@@ -170,17 +170,17 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     # Firstly, curry `qval()`
     qval = qval_curry(request)
     ...
-    
+
     # Then use it as a decorator.
     # Note: you view now must accept `request` as its first argument
     @app.route(...)
     @qval(...)
-    def view(request, params): 
+    def view(request, params):
     ...
- 
+
     ```
     Check out the full Flask [example](examples/flask-example.py) in `examples/flask-example.py`.<br>
-    
+
     You can run the example using the command below:
     ```
     $ PYTHONPATH=. FLASK_APP=examples/flask-example.py flask run
@@ -195,7 +195,7 @@ do it automatically if `DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the 
     setup_falcon_error_handlers(app)
     ```
     Full Falcon [example](examples/falcon-example.py) can be found here: `examples/falcon-example.py`.<br>
-    
+
     Use the following command to run the app:
     ```
     $ PYTHONPATH=. python examples/falcon-example.py
@@ -206,13 +206,13 @@ Refer to the [documentation](https://qval.rtfd.io) for more verbose descriptions
 You can also look at the [tests](tests) to get a better idea of how the library works.
 
 ### Configuration
-Qval supports configuration via python config files and environmental variables. 
-If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` are defined, the specified config module will be used. Otherwise, 
+Qval supports configuration via python config files and environmental variables.
+If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` are defined, the specified config module will be used. Otherwise,
 all lookups would be done in `os.environ`. <p>
 Supported variables:
-* `QVAL_MAKE_REQUEST_WRAPPER = myapp.myfile.my_func`. Customizes the behaviour of the `make_request()` function, 
-which is applied to all incoming requests, after which the result is passed to `qval.qval.QueryParamValidator`. 
-The provided function must accept `request` and return an object that supports the request interface 
+* `QVAL_MAKE_REQUEST_WRAPPER = myapp.myfile.my_func`. Customizes the behaviour of the `make_request()` function,
+which is applied to all incoming requests, after which the result is passed to `qval.qval.QueryParamValidator`.
+The provided function must accept `request` and return an object that supports the request interface
 (see `qval.framework_integration.DummyReqiest`).
 <br>For example, the following code adds logging to each `make_request()` call:
 
@@ -227,7 +227,7 @@ The provided function must accept `request` and return an object that supports t
     ```
     You will also need to execute `export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
     or to add it to the config file.
-* `QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. `@qval()` will use it to determine which argument is the request. 
+* `QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. `@qval()` will use it to determine which argument is the request.
 If you have a custom request class that implements the `qval.framework_integration.DummyRequest` interface, provide it using this variable.
 
 ### Logging

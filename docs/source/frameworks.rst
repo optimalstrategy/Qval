@@ -12,7 +12,7 @@ use :func:`validate() <qval.qval.validate>` inside.
 Django
 ------
 For Django *without* DRF you may need to add the exception handler to :code:`settings.MIDDLEWARE`. Qval attempts to
-do it automatically if :code:`DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the following message:
+do it automatically if :code:`DJANO_SETTINGS_MODULE` is set. Otherwise, you'll see the following message:
 
 .. code-block:: bash
 

@@ -5,7 +5,7 @@ Welcome to Qval's documentation!
 small projects that require a lot of repetitive parameter validation. In contrast with DRF's
 `Validators <https://www.django-rest-framework.org/api-guide/validators/>`_ (and other serialization abstractions),
 Qval requires almost no boilerplate. It is built using context managers and mainly
-targets `Django <https://www.djangoproject.com/>`_ and DRF `Django Rest Framework <https://www.django-rest-framework.org/>`_,
+targets `Django <https://www.djangoproject.com/>`_ and `Django Rest Framework <https://www.django-rest-framework.org/>`_ (DRF),
 but also supports `Flask <http://flask.pocoo.org/>`_ and `Falcon <https://falconframework.org/>`_.
 
 Qval can validate incoming query parameters, convert them to python objects and
