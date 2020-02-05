@@ -28,7 +28,7 @@ py==1.8.1
 Pygments==2.5.2
 pyparsing==2.4.6
 pytest==5.3.5
-pytest-black==0.3.7
+pytest-black==0.3.8
 pytest-cov==2.8.1
 python-mimeparse==1.6.0
 pytz==2019.3
