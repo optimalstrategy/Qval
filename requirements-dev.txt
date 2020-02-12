@@ -49,6 +49,6 @@ toml==0.10.0
 tox==3.14.3
 ujson==1.35
 urllib3==1.25.8
-virtualenv==16.7.9
+virtualenv==20.0.2
 wcwidth==0.1.8
 Werkzeug==0.16.1
