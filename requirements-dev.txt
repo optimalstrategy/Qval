@@ -51,4 +51,4 @@ ujson==1.35
 urllib3==1.25.8
 virtualenv==20.0.3
 wcwidth==0.1.8
-Werkzeug==0.16.1
+Werkzeug==1.0.0
