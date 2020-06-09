@@ -47,7 +47,7 @@ sphinxcontrib-websupport==1.2.0
 sqlparse==0.3.0
 toml==0.10.0
 tox==3.14.5
-ujson==1.35
+ujson==3.0.0
 urllib3==1.25.8
 virtualenv==20.0.7
 wcwidth==0.2.4
