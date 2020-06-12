@@ -27,23 +27,19 @@ $ pip install qval
 ```
 
 ## Basic Usage
-You can use Qval both as a function and decorator. The function `validate()` accepts 3 positional arguments and 1 named:
+You can use Qval both as a function and a decorator. The function `validate()` accepts 3 positional arguments and 1 named:
 ```python
 # qval.py
 def validate(
-    # Request instance. Must implement the request interface or be a dictionary.
-    request: Union[Request, Dict[str, str]],
-    # A Dictionary in the form of (param_name -> `Validator()` object).
-    validators: Dict[str, Validator] = None,
-    # Provide true if you want to access any other parameters besides the configured ones  inside the validation context.
-    box_all: bool = True,
-    # The factories that will be used to convert the parameters to python objects..
-    **factories: Optional[Callable[[str], object]],
+    request: Union[Request, Dict[str, str]],  # Request instance. Must implement the request interface or be a dictionary
+    validators: Dict[str, Validator] = None,  # A Dictionary in the form of (param_name -> `Validator()` object)
+    box_all: bool = True,  # If True, adds all query parameters to the params object
+    **factories: Optional[Callable[[str], object]],  # Factories for mapping `str` params to Python objects.
 ) -> QueryParamValidator:
 ```
 
 ### A Use Case
-Let's imagine that you have a RESTful calculator with an endpoint called `/api/divide`. You can use `validate()`
+Let's say that you are developing a RESTful calculator that has an endpoint called `/api/divide`. You can use `validate()`
 to automatically convert the parameters to python objects and then validate them:
 ```python
 from qval import validate
@@ -207,11 +203,11 @@ You can also look at the [tests](tests) to get a better idea of how the library 
 
 ### Configuration
 Qval supports configuration via python config files and environmental variables.
-If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` are defined, the specified config module will be used. Otherwise,
-all lookups would be done in `os.environ`. <p>
+If `DJANGO_SETTINGS_MODULE` or `SETTINGS_MODULE` is defined, the specified config module will be used. Otherwise,
+all lookups will be done in `os.environ`. <p>
 Supported variables:
 * `QVAL_MAKE_REQUEST_WRAPPER = myapp.myfile.my_func`. Customizes the behaviour of the `make_request()` function,
-which is applied to all incoming requests, after which the result is passed to `qval.qval.QueryParamValidator`.
+which is applied to all incoming requests. The result of this function is then passed to `qval.qval.QueryParamValidator`.
 The provided function must accept `request` and return an object that supports the request interface
 (see `qval.framework_integration.DummyReqiest`).
 <br>For example, the following code adds logging to each `make_request()` call:
@@ -221,19 +217,18 @@ The provided function must accept `request` and return an object that supports t
     def my_wrapper(f):
         @functools.wraps(f)
         def wrapper(request):
-            print(f"Received new request: {request}")
+            print(f"Received a new request: {request}")
             return f(request)
         return wrapper
     ```
-    You will also need to execute `export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
-    or to add it to the config file.
-* `QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. `@qval()` will use it to determine which argument is the request.
+    You will also need to set the environment variable `export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your terminal or add it to the used config file.
+* `QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. `@qval()` will use it to determine whether the first or second argument is the request.
 If you have a custom request class that implements the `qval.framework_integration.DummyRequest` interface, provide it using this variable.
 
 ### Logging
-Qval uses a global object called `log` for reporting errors. You disable this by calling `log.disable()`. Example error message:
+Qval uses a global object called `log` for reporting errors. You can disable this by calling `log.disable()`. Here's an example error message:
 ```bash
-An error occurred during the validation or inside of the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
+An error occurred during the validation or inside the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
 | Parameters: <QueryDict: {'a': ['2.2324'], 'b': ['30000000']}>
 | Body      : b''
 | Exception:
@@ -247,7 +242,7 @@ Internal Server Error: /api/pow
 [19/Nov/2018 07:03:15] "GET /api/pow?a=2.2324&b=30000000 HTTP/1.1" 500 102
 ```
 
-Disable logging with the following code:
+Disable the logging with the following code:
 ```python
 from qval import log
 log.disable()
