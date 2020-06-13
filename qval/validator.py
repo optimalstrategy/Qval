@@ -5,7 +5,7 @@ Predicate = Callable[[Any], bool]
 
 class QvalValidationError(Exception):
     """
-    An error raised if validation fails.
+    The error raised if validation fails.
     This exception should be used to provide a custom validation error message to the client.
 
     Example:
@@ -25,7 +25,7 @@ class QvalValidationError(Exception):
 
 class Validator(object):
     """
-    Validates the given value using provided predicates.
+    Validates the given value using the provided predicates.
 
     .. automethod:: __call__
     """

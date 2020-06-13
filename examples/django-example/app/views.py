@@ -17,7 +17,7 @@ def division_view(request: HttpRequest):
     # If validation fails or user code throws an error, context manager
     # will raise InvalidQueryParamException or APIException respectively.
     # In Django, these exception will be processed and result
-    # in error codes (400 and 500) on the client side.
+    # in the error codes 400 and 500 on the client side.
     params = (
         validate(request, a=int, b=int)
         # `b` must be anything but zero
@@ -41,7 +41,7 @@ def pow_view(request, params):
     }
    """
     # Here we don't catch the OverflowError if `b` is too big.
-    # This will result in 500 error on the client side.
+    # This will result in the 500 error on the client side.
     return JsonResponse({"answer": params.a ** params.b})
 
 
@@ -49,8 +49,8 @@ class PurchaseView(DetailView):
     @staticmethod
     def price_validator(price: int) -> bool:
         """
-        A predicate to validate `price` query parameter.
-        Provides custom error message.
+        A predicate to validate the `price` query parameter.
+        Provides a custom error message.
         """
         if price <= 0:
             # If price does not match our requirements, we raise QvalValidationError() with a custom message.
@@ -66,7 +66,7 @@ class PurchaseView(DetailView):
         "token": Validator(lambda x: len(x) == 12),
         # Validator(p) can be omitted if there is only one predicate:
         "item_id": lambda x: x >= 0,
-        # Access underlying function without get/set protocol.
+        # Access the underlying function without the get/set protocol.
         # In order to avoid this hack, define validators outside of the class.
         "price": price_validator.__func__,
     }
