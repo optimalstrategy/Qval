@@ -8,7 +8,7 @@ The core class is called `QueryParamValidator`. It accepts 4 arguments:
 - factories: A dictionary of factories `{param -> factory}`. The value of the parameter will be provided
   to the factory before validation. Any callable that accepts a string and returns anything is a valid factory.
 
-- validators: AD dictionary of validators `{param -> Validator}`. Validator is basically a list of predicates
+- validators: A dictionary of validators `{param -> Validator}`. A `Validator` is basically a list of predicates
   with the __call__() operator. See the `Validator` class for more info.
 
 - box_all: If true, adds all request parameters to the output collection.
@@ -86,7 +86,7 @@ Now the error is raised inside of the context block:
 
 
 Documentation:
-    Refer to documentation at https://qval.rtfd.io.
+    Refer to the documentation at https://qval.rtfd.io.
 """
 from .utils import log
 from .qval import QueryParamValidator, validate, qval, qval_curry
@@ -94,4 +94,4 @@ from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator, QvalValidationError
 
 
-__version__ = "0.3.3"
+__version__ = "0.4.1"

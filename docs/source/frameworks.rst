@@ -11,13 +11,13 @@ use :func:`validate() <qval.qval.validate>` inside.
 ------
 Django
 ------
-For Django *without* DRF you may need to add exception handler to :code:`settings.MIDDLEWARE`. Qval attempts to
-do it automatically if :code:`DJANO_SETTINGS_MODULE` is set. Otherwise you'll see the following message:
+For Django *without* DRF you may need to add the exception handler to :code:`settings.MIDDLEWARE`. Qval attempts to
+do it automatically if :code:`DJANO_SETTINGS_MODULE` is set. Otherwise, you'll see the following message:
 
 .. code-block:: bash
 
-    WARNING:root:Unable to add APIException middleware to the MIDDLEWARE list. Django does not
-    support APIException handling without DRF integration. Define DJANGO_SETTINGS_MODULE or
+    WARNING:root:Unable to add the APIException middleware to the MIDDLEWARE list. Django does not
+    support handling APIException without DRF integration. Define DJANGO_SETTINGS_MODULE or
     add 'qval.framework_integration.HandleAPIExceptionDjango' to the MIDDLEWARE list.
 
 
@@ -26,7 +26,7 @@ Take a look at the plain Django example `here <https://github.com/OptimalStrateg
 -----
 Flask
 -----
-If you are using Flask, you will need to setup exception handlers:
+If you are using Flask, you will need to setup the exception handlers:
 
 .. code-block:: python
 
@@ -48,7 +48,7 @@ Since :code:`request` in Flask is a global object, you may want to curry :func:`
     ...
 
     # Then use it as a decorator.
-    # Note: you view now must accept request as first argument
+    # Note: you view now must accept `request` as its first argument
     @app.route(...)
     @qval(...)
     def view(request, params):
@@ -64,7 +64,7 @@ You can run the example using the command below:
 ------
 Falcon
 ------
-Similarly to Flask, with Falcon you will need to setup error handlers:
+Similarly to Flask, with Falcon you will need to setup the error handlers:
 
 .. code-block:: python
 
