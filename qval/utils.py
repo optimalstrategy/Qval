@@ -14,11 +14,13 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
     The behavior of this function can be customized with the
     :func:`@_make_request() <qval.framework_integration._make_request>` decorator.
     Provide the path to your wrapper using :code:`QVAL_MAKE_REQUEST_WRAPPER` in the settings file
-    or set it as an environment variable. The wrapper function must accept :code:`request` as the parameter and
+    or set it as an environment variable. The wrapper function must accept :code:`request` as its first argument and
     return an object that implements the request interface.
 
-    For example, the following code adds `print` to each call of the function:
+    For example, the following code adds print each incoming request:
     ::
+        # settings.py
+        QVAL_MAKE_REQUEST_WRAPPER = "app.utils.my_wrapper"
 
         # app/utils.py
         def my_wrapper(f):
@@ -27,9 +29,6 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
                 print(f"Received new request: {request}")
                 return f(request)
             return wrapper
-
-    Then execute :code:`export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
-    or simply add it to the config file.
 
     :param request: dict or request instance
     :return: request
@@ -41,7 +40,7 @@ def make_request(request: Union[Dict[str, str], fwk.Request]) -> fwk.RequestType
 
 def get_request_params(request: fwk.RequestType):
     """
-    Returns a dictionary of the query parameters of the given request.
+    Returns a dictionary of the query parameters in the given request.
 
     :param request: any supported request
     :return: dictionary of parameters
@@ -58,7 +57,7 @@ def get_request_params(request: fwk.RequestType):
 
 def dummify(request: fwk.Request) -> fwk.DummyRequest:
     """
-    Constructs a :class:`qval.framework_integration.DummyRequest` with the parameters of the given request.
+    Constructs a :class:`qval.framework_integration.DummyRequest` with the parameters in the given request.
 
     :param request: any supported request
     :return: :code:`DummyRequest(request.<params>)`
@@ -68,7 +67,7 @@ def dummify(request: fwk.Request) -> fwk.DummyRequest:
 
 class FrozenBox(object):
     """
-    A frozen dictionary that allows accessing the elements with :code:`.`
+    A frozen dictionary that allows accessing its elements with :code:`.`
 
     Example:
         >>> box = FrozenBox({"num": 10, "s": "string"})
@@ -103,7 +102,8 @@ class FrozenBox(object):
 
     def __getattr__(self, item: str) -> Any:
         """
-        Returns the value of the stored `item` or attribute of the object.
+        Returns the value of the stored `item` or attribute of the object
+        in case the item doesn't exist.
 
         :param item: item key
         :return: value
@@ -217,7 +217,7 @@ class ExcLogger(object):
 
     def error(self, *args, **kwargs):
         """
-        Shortcut for :meth:`log("error", ...) <qval.utils.ExcLogger.log>`.
+        A shortcut for :meth:`log("error", ...) <qval.utils.ExcLogger.log>`.
 
         :param args: log args
         :param kwargs: log kwargs

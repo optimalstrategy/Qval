@@ -3,21 +3,21 @@ This module provides a convenient API for verifying query parameters.
 
 The core class is called `QueryParamValidator`. It accepts 4 arguments:
 
-- request: Request instance (Any object that has the following attributes: GET, query_params and body)
+- request: Request instance (Any object that has the following attributes: `GET`, `query_params`, `body`)
 
 - factories: A dictionary of factories `{param -> factory}`. The value of the parameter will be provided
   to the factory before validation. Any callable that accepts a string and returns anything is a valid factory.
 
 - validators: A dictionary of validators `{param -> Validator}`. A `Validator` is basically a list of predicates
-  with the __call__() operator. See the `Validator` class for more info.
+  with `__call__`. See the `Validator` class for more info.
 
 - box_all: If true, adds all request parameters to the output collection.
-  Otherwise, only parameters specified in `factories` will be added.
+  Otherwise, only the parameters specified in `factories` will be added.
 
-If any parameter fails validation, `InvalidQueryParamException` (HTTP code = 400) will be raised.
-Also, only `TypeError`, `ValueError` and `KeyError` occurred after an argument was provided to the factory
-result in the same exception.
-Any error thrown inside or outside of the context will raise an APIError (HTTP code = 500).
+If any of the parameters fails validation, `InvalidQueryParamException` (HTTP code = 400) will be raised.
+Only `TypeError`, `ValueError` and `KeyError` raised after the argument was provided to the factory
+result in this exception.
+Any error thrown inside or outside the context will raise an APIError (HTTP code = 500).
 
 Example:
     >>> from qval.framework_integration import DummyRequest
@@ -26,19 +26,19 @@ Example:
     ...     print(p.num)
     42
 
-The code above is too verbose. That's why you should use `validate()` -
+The code above is too verbose to use if frequently. Instead, there is `validate()` --
 this function does all the boilerplate work for you:
 - `validate()` automatically converts dictionaries to Request-like objects
 - Key-value arguments are used to provide factories
 - It's easier to type
 
-Simple example:
-    >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use dictionary instead of a Request instance
+A simple example:
+    >>> r = {"num": "42", "string": "s", "price": "3.14"}  # you can use a dictionary instead of a Request-like object
     >>> with validate(r, num=int, price=float) as p:
     ...     print(p.num, p.price, p.string, sep=', ')
     42, 3.14, s
 
-A little bit more complex example, with a custom factory:
+A slightly more complex example, with a custom factory:
     >>> r = {"price": "2.79$", "tax": "0.5$"}
     >>> currency2f = lambda x: float(x[:-1])  # factory that converts {num}$ to float
     >>> with validate(r, price=currency2f, tax=currency2f) as p:
@@ -55,11 +55,11 @@ You can also use the `qval()` decorator:
     >>> view({"num": "10", "special": "0.7"})
     10, 0.7
 
-If something fails during the validation or inside of the function, an error will be thrown.
+If something fails during the validation or inside the function, an error will be thrown.
 Consider the following example:
 
     >>> factories = {"num": int, "special": int}  # now `special` is an integer
-    >>> @qval(factories, validators=None)  # no validators for simplicity
+    >>> @qval(factories, validators=None)
     ... def view(request, params):
     ...     pass
     >>> view({"num": "10", "special": "0.7"})  # doctest: +IGNORE_EXCEPTION_DETAIL
@@ -70,7 +70,7 @@ Consider the following example:
 
     The HTTP code of the exception above is 400 (Bad Request).
 
-Now the error is raised inside of the context block:
+In case if an error is raised inside the context, an APIException will be generated:
     >>> factories = {"num": int, "special": float}
     >>> @qval(factories, validators=None)  # no validators for simplicity
     ... def view(request, params):
@@ -94,4 +94,4 @@ from .exceptions import InvalidQueryParamException, APIException
 from .validator import Validator, QvalValidationError
 
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
