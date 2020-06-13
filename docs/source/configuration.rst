@@ -13,8 +13,8 @@ all lookups will be done in :obj:`os.environ`.
 Supported variables:
 
 * | :code:`QVAL_MAKE_REQUEST_WRAPPER = myapp.myfile.my_func`. Customizes the behavior of the
-    :func:`make_request() <qval.utils.make_request>` function, which is applied to all incoming requests,
-    then the result is passed to :class:`qval.qval.QueryParamValidator`. The provided function must accept :code:`request`
+    :func:`make_request() <qval.utils.make_request>` function, which is applied to all incoming requests. The
+    result of this function is then passed to :class:`qval.qval.QueryParamValidator`. The provided function must accept :code:`request`
     and return an object that supports the request interface (see :class:`DummyRequest <qval.framework_integration.DummyRequest>`).
 
   | For example, the following code adds a print to each :func:`make_request() <qval.utils.make_request>` call:
@@ -25,12 +25,12 @@ Supported variables:
         def my_wrapper(f):
             @functools.wraps(f)
             def wrapper(request):
-                print(f"Received new request: {request}")
+                print(f"Received a new request: {request}")
                 return f(request)
             return wrapper
 
-  | You will also need to execute :code:`export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your console
-    or to add it to the config file.
+  | You will also need to set the environment variable :code:`export QVAL_MAKE_REQUEST_WRAPPER=app.utils.my_wrapper` in your terminal
+    or add it to the used config file. :code:`@qval()` will use it to determine whether the first or second argument is the request.
 
 * | :code:`QVAL_REQUEST_CLASS = path.to.CustomRequestClass`. :func:`@qval() <qval.qval.qval>` will use it to
     determine which argument is the request. If you have a custom request class that implements
@@ -40,11 +40,11 @@ Supported variables:
 Logging
 -------
 
-Qval uses the global :obj:`log <qval.utils.log>` object when reporting errors. Example error message:
+Qval uses a global object called :obj:`log <qval.utils.log>` for reporting errors. Here is an example error message:
 
 .. code-block:: bash
 
-    An error occurred during the validation or inside of the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
+    An error occurred during the validation or inside the context: exc `<class 'OverflowError'>` ((34, 'Numerical result out of range')).
     | Parameters: <QueryDict: {'a': ['2.2324'], 'b': ['30000000']}>
     | Body      : b''
     | Exception:

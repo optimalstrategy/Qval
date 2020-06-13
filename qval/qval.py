@@ -88,7 +88,7 @@ class QueryParamValidator(AbstractContextManager):
     @property
     def query_params(self) -> Dict[str, str]:
         """
-        Returns the dictionary of query parameters.
+        Returns the dictionary of the query parameters.
         """
         return self._query_params
 
@@ -121,7 +121,7 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds the :code:`greater than zero` comparison check for the provided parameter.
+        Adds a :code:`greater than zero` comparison check for the provided parameter.
         Provided :code:`param` will be tested as [:code:`transform(param) > 0`].
 
         :param param: name of the request parameter
@@ -134,7 +134,7 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds the :code:`greater than` comparison check for provided parameter.
+        Adds a :code:`greater than` comparison check for provided parameter.
         For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) > 10`].
 
         :param param: name of the request parameter
@@ -148,7 +148,7 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds the `less than` comparison check for the provided parameter.
+        Adds a `less than` comparison check for the provided parameter.
         For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) < 10`].
 
         :param param: name of the request parameter
@@ -162,7 +162,7 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, value: Any, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds the `equality` check for the provided parameter.
+        Adds an `equality` check for the provided parameter.
         For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) == 10`].
 
         :param param: name of the request parameter
@@ -176,7 +176,7 @@ class QueryParamValidator(AbstractContextManager):
         self, param: str, transform: Callable[[Any], Any] = lambda x: x
     ) -> "QueryParamValidator":
         """
-        Adds the `nonzero` check for the provided parameter.
+        Adds a `nonzero` check for the provided parameter.
         For example, if value = 10, :code:`param` will be tested as [:code:`transform(param) != 0`].
 
         :param param: name of the request parameter
@@ -261,7 +261,7 @@ class QueryParamValidator(AbstractContextManager):
         if exc_type not in (exceptions.InvalidQueryParamException, None):
             body = getattr(self.request, "body", {})
             text = (
-                f"An error has occurred during the validation or inside of the context: exc `{exc_type}` ({exc_val}).\n"
+                f"An error has occurred during the validation or inside the context: exc `{exc_type}` ({exc_val}).\n"
                 f"| Parameters: {self.query_params}\n"
                 f"| Body      : {body}\n"
                 f"| Exception:\n"

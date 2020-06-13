@@ -39,7 +39,7 @@ Qval provides two ways to validate query parameters:
 
 
 Let's jump to a quick example.
-Imagine that you have a RESTful calculator with an endpoint called :code:`/api/divide`. You can use :func:`validate() <qval.qval.validate>`
+Let's say that you are developing a RESTful calculator that has an endpoint called :code:`/api/divide`. You can use :func:`validate() <qval.qval.validate>`
 to automatically convert the parameters to python objects and then validate them:
 
     .. code-block:: python

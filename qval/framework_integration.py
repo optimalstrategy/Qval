@@ -234,7 +234,7 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
             _rq: Request, _rp: Response, exc: "APIException", _p: dict
         ):
             """
-            Handles APIException in Falcon.
+            Handles APIExceptions in Falcon.
             """
             code = HTTP_400 if exc.status_code == 400 else HTTP_500
             detail = (
@@ -247,7 +247,7 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
 
         def handle_api_exception(exc: "APIException", _rq, _rp: Response, _p):
             """
-            Handles APIException in Falcon.
+            Handles APIExceptions in Falcon.
             """
             code = HTTP_400 if exc.status_code == 400 else HTTP_500
             detail = (
@@ -259,6 +259,6 @@ def setup_falcon_error_handlers(api: "falcon.API"):  # pragma: no cover
     api.add_error_handler(APIException, handler=handle_api_exception)
 
 
-# RequestType is a tuple that will be used in type checking.
+# RequestType is a tuple that will be used in `isinstance` checks.
 # Request is a Union of the available request types and is used in annotations.
 Request = Union[RequestType]
