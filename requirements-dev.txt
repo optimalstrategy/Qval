@@ -11,7 +11,7 @@ click==7.1.2
 codecov==2.1.5
 coverage==4.4
 distlib==0.3.0
-Django==3.0.7
+Django==3.0.12
 djangorestframework==3.11.0
 docutils==0.16
 falcon==2.0.0
