@@ -1,5 +1,5 @@
 # Qval | Query params validation library
-[![CircleCI](https://circleci.com/gh/optimalstrategy/Qval/tree/master.svg?style=svg)](https://circleci.com/gh/OptimalStrategy/Qval/tree/master)
+[![CircleCI](https://circleci.com/gh/optimalstrategy/Qval/tree/master.svg?style=svg)](https://circleci.com/gh/optimalstrategy/Qval/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/qval/badge/?version=latest)](https://qval.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/OptimalStrategy/Qval/branch/master/graph/badge.svg)](https://codecov.io/gh/OptimalStrategy/Qval)
 [![PyPI version](https://badge.fury.io/py/qval.svg)](https://badge.fury.io/py/qval)
