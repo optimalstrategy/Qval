@@ -11,8 +11,8 @@ click==7.1.2
 codecov==2.1.5
 coverage==4.4
 distlib==0.3.0
-Django==3.0.7
 djangorestframework==3.11.2
+Django==3.1.6
 docutils==0.16
 falcon==2.0.0
 filelock==3.0.12
@@ -20,13 +20,13 @@ Flask==1.1.2
 idna==2.9
 imagesize==1.2.0
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 more-itertools==8.3.0
 packaging==20.4
 pluggy==0.13.1
-py==1.8.1
-Pygments==2.6.1
+py==1.10.0
+Pygments==2.7.4
 pyparsing==2.4.7
 pytest==5.4.3
 pytest-black==0.3.9
