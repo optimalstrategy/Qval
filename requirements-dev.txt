@@ -13,7 +13,7 @@ coverage==5.5
 distlib==0.3.2
 Django==3.2.5
 djangorestframework==3.12.4
-docutils==0.16
+docutils==0.17.1
 falcon==3.0.1
 filelock==3.0.12
 Flask==2.0.1
