@@ -1,3 +1,6 @@
+## Qval is no more
+In the recent years, the Python ecosystem has been moving towards typing-based APIs and produced a number of ergonomic and well-engineered libraries. Qval isn't as thought through and is largely useless outside of extremely simple applications. Consider using [Pydantic](https://pydantic-docs.helpmanual.io/) or [marshmallow-dataclass](https://pypi.org/project/marshmallow-dataclass/) if you need a mature validation library.
+
 # Qval | Query params validation library
 [![CircleCI](https://circleci.com/gh/optimalstrategy/Qval/tree/master.svg?style=svg)](https://circleci.com/gh/optimalstrategy/Qval/tree/master)
 [![Documentation Status](https://readthedocs.org/projects/qval/badge/?version=latest)](https://qval.readthedocs.io/en/latest/?badge=latest)
